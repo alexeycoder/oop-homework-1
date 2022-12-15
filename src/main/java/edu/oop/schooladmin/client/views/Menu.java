@@ -1,4 +1,4 @@
-package edu.oop.schooladmin.consoleclient.views;
+package edu.oop.schooladmin.client.views;
 
 public class Menu {
     public static void mainMenu() {

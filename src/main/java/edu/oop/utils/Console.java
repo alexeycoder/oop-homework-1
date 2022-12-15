@@ -154,7 +154,7 @@ public class Console {
 		System.out.printf(EscapeCode.CLEAR.getCode());
 	}
 
-	private static void resetStyle() {
+	public static void resetStyle() {
 		System.out.print(EscapeCode.RESET.getCode());
 	}
 

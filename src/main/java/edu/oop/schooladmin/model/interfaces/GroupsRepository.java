@@ -8,7 +8,7 @@ public interface GroupsRepository {
 
 	// linked repos
 
-	TeachersRepository teachersRepository();
+	//TeachersRepository teachersRepository();
 
 	// create
 
