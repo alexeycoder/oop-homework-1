@@ -5,7 +5,6 @@ import java.util.List;
 
 import edu.oop.schooladmin.model.entities.Group;
 import edu.oop.schooladmin.model.interfaces.GroupsRepository;
-import edu.oop.schooladmin.model.interfaces.TeachersRepository;
 import edu.oop.schooladmin.testdatatables.GroupsTable;
 
 public class TestDbGroupsRepository implements GroupsRepository {
@@ -40,9 +39,13 @@ public class TestDbGroupsRepository implements GroupsRepository {
 	}
 
 	@Override
+	public List<Group> getAllGroups() {
+		return groups.stream().map(Group::new).toList();
+	}
+
+	@Override
 	public List<Group> getGroupsByTeacherId(int teacherId) {
-		// TODO Auto-generated method stub
-		return null;
+		return groups.stream().filter(d -> d.getTeacherId().equals(teacherId)).map(Group::new).toList();
 	}
 
 	@Override

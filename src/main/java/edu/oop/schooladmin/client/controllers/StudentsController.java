@@ -17,22 +17,31 @@ public class StudentsController extends ControllerBase {
 	@Override
 	void runLifecycle() {
 		do {
-
-			view.showMenu(Commons.STUDENTS_MENU);
-			int userChoice = view.askUserChoice(Commons.MENU_MAKE_YOUR_CHOICE, Commons.STUDENTS_MENU);
-			if (userChoice == Commons.DEFAULT_EXIT_CMD) {
+			var menuModel = Commons.STUDENTS_MENU;
+			view.showMenu(menuModel);
+			Object userChoice = view.askUserChoice(Commons.MENU_MAKE_YOUR_CHOICE, menuModel);
+			if (userChoice.equals(Commons.CMD_EXIT)) {
+				forceExit();
+			} else if (userChoice.equals(Commons.CMD_GO_BACK)) {
 				return;
-			}
+			} else if (userChoice instanceof Integer menuId) {
 
-			switch (userChoice) {
-				case 1 -> {
-					showAll();
-					view.waitEnterToProceed();
-				}
-				default -> throw new NoSuchElementException();
+				switchToAction(menuId);
 			}
 
 		} while (true);
+	}
+
+	private void switchToAction(int menuId) {
+		switch (menuId) {
+			case 1 -> showAll();
+			case 2 -> dummyAction();
+			case 3 -> dummyAction();
+			case 4 -> dummyAction();
+			case 5 -> dummyAction();
+			case 6 -> dummyAction();
+			default -> throw new NoSuchElementException();
+		}
 	}
 
 	private void showAll() {
@@ -45,7 +54,8 @@ public class StudentsController extends ControllerBase {
 			resultList.add(new StudentViewModel(student, group));
 		}
 
-		view.showList(resultList, "Список учеников:");
+		view.showList(resultList, "СПИСОК УЧЕНИКОВ:");
+		view.waitEnterToProceed();
 	}
 
 }

@@ -18,25 +18,39 @@ public class MainController extends ControllerBase {
 
 	public void runLifecycle() {
 		do {
+			var menuModel = Commons.MAIN_MENU;
+			view.showMenu(menuModel);
+			Object userChoice = view.askUserChoice(Commons.MENU_MAKE_YOUR_CHOICE, menuModel);
+			if (userChoice.equals(Commons.CMD_EXIT) || userChoice.equals(Commons.CMD_GO_BACK)) {
 
-			view.showMenu(Commons.MAIN_MENU);
-			int userChoice = view.askUserChoice(Commons.MENU_MAKE_YOUR_CHOICE, Commons.MAIN_MENU);
-			if (userChoice == Commons.DEFAULT_EXIT_CMD) {
-				return;
+				forceExit();
+
+			} else if (userChoice instanceof Integer menuId) {
+
+				var controller = selectController(menuId);
+				controller.runLifecycle();
 			}
-			var controller = selectController(userChoice);
-			controller.runLifecycle();
 
 		} while (true);
 	}
 
-	private ControllerBase selectController(int choice) {
-		return switch (choice) {
+	private ControllerBase selectController(int menuId) {
+		var dummyController = new ControllerBase(dp, view) {
+			@Override
+			void runLifecycle() {
+				System.out.println("Приветики. Тут пока ничего.");
+				view.waitEnterToProceed();
+			}
+		};
+
+		return switch (menuId) {
 			case 1 -> studentsController;
 			case 2 -> teachersController;
 			case 3 -> groupsController;
+			case 4 -> dummyController;
+			case 5 -> dummyController;
 			default -> {
-				throw new IllegalStateException(" ");
+				throw new IllegalStateException();
 			}
 		};
 	}

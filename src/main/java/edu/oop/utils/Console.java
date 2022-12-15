@@ -103,6 +103,31 @@ public class Console {
 		return (min != null && value < min) || (max != null && value > max);
 	}
 
+	public static Object getUserInputVaryType(
+			Scanner inputScanner, String prompt,
+			Function<Object, Boolean> checkIfValid,
+			String warnIncorrect) {
+
+		boolean outOfRange = false;
+
+		while (true) {
+			if (outOfRange) {
+				outOfRange = false;
+				if (warnIncorrect != null)
+					Console.printError(warnIncorrect, null);
+			}
+
+			System.out.print(prompt);
+			String rawInp = inputScanner.nextLine();
+			Integer value = Console.tryParseInt(rawInp);
+			Object result = value != null ? value : rawInp;
+			if (checkIfValid == null || checkIfValid.apply(result)) {
+				return result;
+			}
+			outOfRange = true;
+		}
+	}
+
 	/**
 	 * Затребует от пользователя ввод 'слов', разделённых пробелом, и возвращает
 	 * массив из введённых слов.

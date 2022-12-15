@@ -8,7 +8,7 @@ public interface GroupsRepository {
 
 	// linked repos
 
-	//TeachersRepository teachersRepository();
+	// TeachersRepository teachersRepository();
 
 	// create
 
@@ -17,6 +17,8 @@ public interface GroupsRepository {
 	// read
 
 	Group getGroupById(int groupId);
+
+	List<Group> getAllGroups();
 
 	List<Group> getGroupsByTeacherId(int teacherId);
 
