@@ -24,8 +24,8 @@ public class TestDbProvider implements DataProvider {
 	public TestDbProvider() {
 		this.disciplinesRepository = new TestDbDisciplinesRepository();
 		this.teachersRepository = new TestDbTeachersRepository();
-		// this.groupsRepository = new TestDbGroupsRepository();
-		// this.studentsRepository = new TestDbStudentsRepository();
+		this.groupsRepository = new TestDbGroupsRepository();
+		this.studentsRepository = new TestDbStudentsRepository();
 		// this.teacherAppointmentsRepository = new
 		// TestDbTeacherAppointmentsRepository();
 		// this.ratingsRepository = new TestDbRatingsRepository();
