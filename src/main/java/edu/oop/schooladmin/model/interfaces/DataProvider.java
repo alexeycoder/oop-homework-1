@@ -2,6 +2,7 @@ package edu.oop.schooladmin.model.interfaces;
 
 public interface DataProvider {
 	
+
 	DisciplinesRepository disciplinesRepository();
 
 	TeachersRepository teachersRepository();

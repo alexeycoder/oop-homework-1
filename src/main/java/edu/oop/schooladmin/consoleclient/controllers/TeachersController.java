@@ -2,6 +2,9 @@ package edu.oop.schooladmin.consoleclient.controllers;
 
 import java.util.Scanner;
 
+import javax.net.ssl.SSLPeerUnverifiedException;
+import javax.swing.text.View;
+
 import edu.oop.schooladmin.consoleclient.views.Menu;
 import edu.oop.schooladmin.model.interfaces.DataProvider;
 import edu.oop.utils.Console;
@@ -20,16 +23,33 @@ public class TeachersController extends ControllerBase {
 			Menu.teacherMenu();
 
 			int userChoice = Console.getUserInputIntRange(scanner, "Ваш выбор: ", 0, 5);
-
-			doSomeActionDependingOnUserChoice();
+if(userChoice==1){
+	//showAllTeachers();
+}
+			//doSomeActionDependingOnUserChoice();
 			//
 
 		} while (Console.askYesNo(scanner, "\nЗавершить работу (y/N)? ", false));
 
 	}
 
-	private void doSomeActionDependingOnUserChoice() {
+	// private void showAllTeachers(name, cartId) {
+		
 
-	}
+	// 	// View
+
+	// 	// var rep =dp.teachersRepository();
+	// 	// rep.getAllTeachers();
+	// 	// rep.
+
+	// 	// List<String> items = 
+
+	// 	// View.showAllTeachers()
+
+
+	// }
+
+
+
 
 }
