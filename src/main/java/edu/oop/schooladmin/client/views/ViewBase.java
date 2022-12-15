@@ -8,9 +8,11 @@ import edu.oop.schooladmin.client.viewmodels.ViewModelBase;
 public interface ViewBase {
 	public void waitEnterToProceed();
 
-	void showMenu(Map<Integer, String> menuModel);
+	void showMenu(Map<Object, String> menuModel);
 
-	int askUserChoice(String askModel, Map<Integer, String> menuModel);
+	Object askUserChoice(String askModel, Map<Object, String> menuModel);
 
 	public void showList(List<? extends ViewModelBase> viewModelsList, String title);
+
+	public void showGoodbye();
 }

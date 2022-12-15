@@ -6,12 +6,12 @@ import edu.oop.schooladmin.model.entities.Group;
 import edu.oop.schooladmin.model.entities.Student;
 
 public class StudentViewModel extends ViewModelBase {
-	private int id;
-	private String firstName;
-	private String lastName;
-	private LocalDate birthDate;
-	private int classYear;
-	private char classMark;
+	private final int id;
+	private final String firstName;
+	private final String lastName;
+	private final LocalDate birthDate;
+	private final int classYear;
+	private final char classMark;
 
 	public StudentViewModel(Student student, Group group) {
 		this.id = student.getStudentId();
@@ -24,7 +24,7 @@ public class StudentViewModel extends ViewModelBase {
 
 	@Override
 	public String toString() {
-		return String.format("%d\t%s %s\t\tРод. %s\tКласс %d-%s", id, firstName, lastName, birthDate, classYear,
+		return String.format("%d\t%-14s %-14s\tРод. %s\tКласс %d-%s", id, firstName, lastName, birthDate, classYear,
 				classMark);
 	}
 

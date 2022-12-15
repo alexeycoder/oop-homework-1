@@ -63,7 +63,7 @@ public class TestDbDisciplinesRepository implements DisciplinesRepository {
 		if (dbEntity == null) {
 			return false;
 		}
-		//dbEntity.copyProperties(discipline);
+		// dbEntity.copyProperties(discipline);
 		copyProperties(discipline, dbEntity);
 		return true;
 	}
@@ -74,8 +74,12 @@ public class TestDbDisciplinesRepository implements DisciplinesRepository {
 
 		// TODO: Тут использован copyProperties(from, to) место копирующего
 		// конструктора, возможно нам лучше будет избавиться от копирующих конструкторов
-		// у всех класов сущностей
-		return disciplines.stream().map(d -> copyProperties(d, new Discipline())).toList();
+		// у всех класов сущностей (?)
+		// return disciplines.stream().map(d -> copyProperties(d, new
+		// Discipline())).toList();
+
+		// Вариант с использованием копирующего конструктора:
+		return disciplines.stream().map(Discipline::new).toList();
 	}
 
 	@Override

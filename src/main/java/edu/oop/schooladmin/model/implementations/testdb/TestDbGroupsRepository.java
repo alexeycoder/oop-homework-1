@@ -38,14 +38,15 @@ public class TestDbGroupsRepository implements GroupsRepository{
         else return false;
     }
 
-    @Override
-    public List<Group> getAllGroups() {
-        List<Group> resultList = new ArrayList<>();
-        for (Group group : groups) {
-            resultList.add(new Group(group));
-        }
-        return resultList;
-    }
+	@Override
+	public List<Group> getAllGroups() {
+		return groups.stream().map(Group::new).toList();
+	}
+
+	@Override
+	public List<Group> getGroupsByTeacherId(int teacherId) {
+		return groups.stream().filter(d -> d.getTeacherId().equals(teacherId)).map(Group::new).toList();
+	}
 
     @Override
     public Group getGroupById(int groupId) {
@@ -54,17 +55,6 @@ public class TestDbGroupsRepository implements GroupsRepository{
             return new Group(dbEntity.get());
         }
         return null;
-    }
-
-    @Override
-    public List<Group> getGroupsByTeacherId(int teacherId) {
-        List<Group> resultList = new ArrayList<>();
-        for (Group group : groups) {
-            if (group.getTeacherId() == teacherId) {
-                resultList.add(new Group(group));
-            }
-        }
-        return resultList;
     }
 
     @Override
