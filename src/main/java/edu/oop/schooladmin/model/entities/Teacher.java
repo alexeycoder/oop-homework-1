@@ -2,58 +2,46 @@ package edu.oop.schooladmin.model.entities;
 
 import java.time.LocalDate;
 
-public class Teacher {
-	private int teacherId;
-	private String firstName;
-	private String lastName;
-	private LocalDate birthDate;
-	private int rank;
+public class Teacher extends Person {
+	private Integer teacherId;
+	private int grade;
 
-	public Teacher(int teacherId, String firstName, String lastName, LocalDate birthDate, int rank) {
-		this.teacherId = teacherId;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.birthDate = birthDate;
-		this.rank = rank;
+	public Teacher() {
 	}
 
-	public int getTeacherId() {
+	public Teacher(Integer teacherId, String firstName, String secondName, LocalDate birthDate, int grade) {
+		super(firstName, secondName, birthDate);
+		this.teacherId = teacherId;
+		this.grade = grade;
+	}
+
+	public Teacher(Teacher other) {
+		this(
+				other.teacherId,
+				other.firstName,
+				other.lastName,
+				other.birthDate,
+				other.grade);
+	}
+
+	public void setTeacherId(Integer teacherId) {
+		this.teacherId = teacherId;
+	}
+
+	public Integer getTeacherId() {
 		return teacherId;
 	}
 
-	public void setTeacherId(int teacherId) {
-		this.teacherId = teacherId;
+	public void setGrade(int grade) {
+		this.grade = grade;
 	}
 
-	public String getFirstName() {
-		return firstName;
+	public int getGrade() {
+		return grade;
 	}
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
-	public LocalDate getBirthDate() {
-		return birthDate;
-	}
-
-	public void setBirthDate(LocalDate birthDate) {
-		this.birthDate = birthDate;
-	}
-
-	public int getRank() {
-		return rank;
-	}
-
-	public void setRank(int rank) {
-		this.rank = rank;
+	@Override
+	public String toString() {
+		return teacherId + ":" + super.toString() + ":" + grade;
 	}
 }

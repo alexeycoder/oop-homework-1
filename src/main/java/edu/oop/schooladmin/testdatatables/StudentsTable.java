@@ -14,8 +14,13 @@ public class StudentsTable {
 
 	private static final ArrayList<Student> students = new ArrayList<>(
 		Arrays.asList(
-			new Student(1, "Ярослав", "Соколов", LocalDate.of(1997, 10, 14), 91)
-
+			new Student(1, "Яросла", "Соколов", LocalDate.of(1997, 10, 14), 91),
+			new Student(2, "Дмитри", "Андреев", LocalDate.of(1997, 01, 8), 91),
+			new Student(3, "Владим", "Сотников", LocalDate.of(1997, 12, 20), 91),
+			new Student(4, "Екатер", "Павлова", LocalDate.of(1997, 07, 30), 91),
+			new Student(5, "Екатер", "Калашникова", LocalDate.of(1997, 06, 12), 91),
+			new Student(6, "Павел", "Басов", LocalDate.of(1997, 9, 12), 92),
+			new Student(7, "Максим", "Козлов", LocalDate.of(1997, 11, 20), 92)
 		)
 	);
 }

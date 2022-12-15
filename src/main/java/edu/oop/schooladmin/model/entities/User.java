@@ -1,21 +1,28 @@
 package edu.oop.schooladmin.model.entities;
 
 public class User {
-	private int userId;
+	private Integer userId;
 	private String loginName;
 	private String password;
-	
-	public User(int userId, String loginName, String password) {
+
+	public User() {
+	}
+
+	public User(Integer userId, String loginName, String password) {
 		this.userId = userId;
 		this.loginName = loginName;
 		this.password = password;
 	}
 
-	public int getUserId() {
+	public User(User other) {
+		this(other.userId, other.loginName, other.password);
+	}
+
+	public Integer getUserId() {
 		return userId;
 	}
 
-	public void setUserId(int userId) {
+	public void setUserId(Integer userId) {
 		this.userId = userId;
 	}
 

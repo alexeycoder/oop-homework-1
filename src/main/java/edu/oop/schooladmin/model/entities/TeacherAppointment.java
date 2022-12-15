@@ -1,47 +1,58 @@
 package edu.oop.schooladmin.model.entities;
 
 public class TeacherAppointment {
-	private int appointmentId;
-	private int teacherId;
-	private int disciplineId;
-	private int groupId;
+	private Integer appointmentId;
+	private Integer teacherId;
+	private Integer disciplineId;
+	private Integer groupId;
 
-	public TeacherAppointment(int appointmentId, int teacherId, int disciplineId, int groupId) {
+	public TeacherAppointment() {
+	}
+
+	public TeacherAppointment(Integer appointmentId, Integer teacherId, Integer disciplineId, Integer groupId) {
 		this.appointmentId = appointmentId;
 		this.teacherId = teacherId;
 		this.disciplineId = disciplineId;
 		this.groupId = groupId;
 	}
 
-	public int getAppointmentId() {
+	public TeacherAppointment(TeacherAppointment other) {
+		this(
+				other.appointmentId,
+				other.teacherId,
+				other.disciplineId,
+				other.groupId);
+	}
+
+	public Integer getAppointmentId() {
 		return appointmentId;
 	}
 
-	public void setAppointmentId(int appointmentId) {
+	public void setAppointmentId(Integer appointmentId) {
 		this.appointmentId = appointmentId;
 	}
 
-	public int getTeacherId() {
+	public Integer getTeacherId() {
 		return teacherId;
 	}
 
-	public void setTeacherId(int teacherId) {
+	public void setTeacherId(Integer teacherId) {
 		this.teacherId = teacherId;
 	}
 
-	public int getDisciplineId() {
+	public Integer getDisciplineId() {
 		return disciplineId;
 	}
 
-	public void setDisciplineId(int disciplineId) {
+	public void setDisciplineId(Integer disciplineId) {
 		this.disciplineId = disciplineId;
 	}
 
-	public int getGroupId() {
+	public Integer getGroupId() {
 		return groupId;
 	}
 
-	public void setGroupId(int groupId) {
+	public void setGroupId(Integer groupId) {
 		this.groupId = groupId;
 	}
 }

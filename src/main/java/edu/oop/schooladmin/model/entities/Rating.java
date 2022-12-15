@@ -3,14 +3,18 @@ package edu.oop.schooladmin.model.entities;
 import java.time.LocalDateTime;
 
 public class Rating {
-	private int ratingId;
-	private int studentId;
-	private int disciplineId;
+	private Integer ratingId;
+	private Integer studentId;
+	private Integer disciplineId;
 	private LocalDateTime dateTime;
 	private int value;
 	private String commentary;
 
-	public Rating(int ratingId, int studentId, int disciplineId, LocalDateTime dateTime, int value, String commentary) {
+	public Rating() {
+	}
+
+	public Rating(Integer ratingId, Integer studentId, Integer disciplineId, LocalDateTime dateTime, int value,
+			String commentary) {
 		this.ratingId = ratingId;
 		this.studentId = studentId;
 		this.disciplineId = disciplineId;
@@ -19,27 +23,37 @@ public class Rating {
 		this.commentary = commentary;
 	}
 
-	public int getRatingId() {
+	public Rating(Rating other) {
+		this(
+				other.ratingId,
+				other.studentId,
+				other.disciplineId,
+				other.dateTime,
+				other.value,
+				other.commentary);
+	}
+
+	public Integer getRatingId() {
 		return ratingId;
 	}
 
-	public void setRatingId(int ratingId) {
+	public void setRatingId(Integer ratingId) {
 		this.ratingId = ratingId;
 	}
 
-	public int getStudentId() {
+	public Integer getStudentId() {
 		return studentId;
 	}
 
-	public void setStudentId(int studentId) {
+	public void setStudentId(Integer studentId) {
 		this.studentId = studentId;
 	}
 
-	public int getDisciplineId() {
+	public Integer getDisciplineId() {
 		return disciplineId;
 	}
 
-	public void setDisciplineId(int disciplineId) {
+	public void setDisciplineId(Integer disciplineId) {
 		this.disciplineId = disciplineId;
 	}
 

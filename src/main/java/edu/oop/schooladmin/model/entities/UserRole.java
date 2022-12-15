@@ -1,29 +1,36 @@
 package edu.oop.schooladmin.model.entities;
 
 public class UserRole {
-	private int roleId;
-	private int userId;
+	private Integer roleId;
+	private Integer userId;
 	private String roleName;
 
-	public UserRole(int roleId, int userId, String roleName) {
+	public UserRole() {
+	}
+
+	public UserRole(Integer roleId, Integer userId, String roleName) {
 		this.roleId = roleId;
 		this.userId = userId;
 		this.roleName = roleName;
 	}
 
-	public int getRoleId() {
+	public UserRole(UserRole other) {
+		this(other.roleId, other.userId, other.roleName);
+	}
+
+	public Integer getRoleId() {
 		return roleId;
 	}
 
-	public void setRoleId(int roleId) {
+	public void setRoleId(Integer roleId) {
 		this.roleId = roleId;
 	}
 
-	public int getUserId() {
+	public Integer getUserId() {
 		return userId;
 	}
 
-	public void setUserId(int userId) {
+	public void setUserId(Integer userId) {
 		this.userId = userId;
 	}
 

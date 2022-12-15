@@ -8,7 +8,7 @@ import edu.oop.schooladmin.model.entities.Teacher;
 
 public class TeachersTable {
 
-	public static ArrayList<Teacher> getTeachers() {
+	public static ArrayList<Teacher> teachers() {
 		return teachers;
 	}
 

@@ -1,30 +1,34 @@
 package edu.oop.schooladmin.model.entities;
 
 public class Group {
-	private int groupId;
+	private Integer groupId;
 	private int classYear;
 	private char classMark;
 	private Integer teacherId;
 
-	public Group(int groupId, int classYear, char classMark, Integer teacherId) {
+	public Group() {
+	}
+
+	public Group(Integer groupId, int classYear, char classMark, Integer teacherId) {
 		this.groupId = groupId;
 		this.classYear = classYear;
 		this.classMark = classMark;
 		this.teacherId = teacherId;
 	}
 
-	public Group(Group other){
-		this.groupId = other.groupId;
-		this.classYear = other.classYear;
-		this.classMark = other.classMark;
-		this.teacherId = other.teacherId;
+	public Group(Group other) {
+		this(
+				other.groupId,
+				other.classYear,
+				other.classMark,
+				other.teacherId);
 	}
 
-	public int getGroupId() {
+	public Integer getGroupId() {
 		return groupId;
 	}
 
-	public void setGroupId(int groupId) {
+	public void setGroupId(Integer groupId) {
 		this.groupId = groupId;
 	}
 

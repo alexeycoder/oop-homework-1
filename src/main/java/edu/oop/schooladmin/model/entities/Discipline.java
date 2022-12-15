@@ -1,23 +1,46 @@
 package edu.oop.schooladmin.model.entities;
 
-public class Discipline {
-	private int disciplineId;
+public class Discipline implements PropertiesReplicator<Discipline> {
+	private Integer disciplineId;
 	private String name;
-	
-	public Discipline(int disciplineId, String name) {
+
+	public Discipline() {
+	}
+
+	public Discipline(Integer disciplineId, String name) {
 		this.disciplineId = disciplineId;
 		this.name = name;
 	}
-	public int getDisciplineId() {
+
+	public Discipline(Discipline other) {
+		// this(other.disciplineId, other.name);
+		copyProperties(other);
+	}
+
+	public Integer getDisciplineId() {
 		return disciplineId;
 	}
-	public void setDisciplineId(int disciplineId) {
+
+	public void setDisciplineId(Integer disciplineId) {
 		this.disciplineId = disciplineId;
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	@Override
+	public void copyProperties(Discipline other) {
+		this.disciplineId = other.disciplineId;
+		this.name = other.name;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("%d: %s", disciplineId, name);
 	}
 }

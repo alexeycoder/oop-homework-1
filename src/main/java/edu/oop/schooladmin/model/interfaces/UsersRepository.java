@@ -1,5 +1,12 @@
 package edu.oop.schooladmin.model.interfaces;
 
-public class UsersRepository {
+public interface UsersRepository {
 	
+	// create
+
+	// read
+
+	// update
+
+	// delete
 }

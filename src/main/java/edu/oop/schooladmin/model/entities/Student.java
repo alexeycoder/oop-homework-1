@@ -2,60 +2,51 @@ package edu.oop.schooladmin.model.entities;
 
 import java.time.LocalDate;
 
-public class Student {
-	private int studentId;
-	private String firstName;
-	private String lastName;
-	private LocalDate birthDate;
-	private int groupId;
+public class Student extends Person {
+    private Integer studentId;
+    private Integer groupId;
 
-	public Student(int studentId, String firstName, String lastName, LocalDate birthDate, int groupId) {
-		this.studentId = studentId;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.birthDate = birthDate;
-		this.groupId = groupId;
-	}
+    public Student() {
+    }
 
-	public int getStudentId() {
-		return studentId;
-	}
+    public Student(Integer studentId, String firstName, String secondName, LocalDate birthDate, Integer groupId) {
+        super(firstName, secondName, birthDate);
+        this.studentId = studentId;
+        this.groupId = groupId;
+    }
 
-	public void setStudentId(int studentId) {
-		this.studentId = studentId;
-	}
+    public Student(Student other) {
+        this(
+                other.studentId,
+                other.firstName,
+                other.lastName,
+                other.birthDate,
+                other.groupId);
+    }
 
-	public String getFirstName() {
-		return firstName;
-	}
+    public Student(String firstName, String secondName, LocalDate birthDate, Integer groupId) {
+        this(null, firstName, secondName, birthDate, groupId);
+    }
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
+    public void setStudentId(Integer studentId) {
+        this.studentId = studentId;
+    }
 
-	public String getLastName() {
-		return lastName;
-	}
+    public Integer getStudentId() {
+        return studentId;
+    }
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
+    public void setGroupId(int groupId) {
+        this.groupId = groupId;
+    }
 
-	public LocalDate getBirthDate() {
-		return birthDate;
-	}
+    public Integer getGroupId() {
+        return groupId;
+    }
 
-	public void setBirthDate(LocalDate birthDate) {
-		this.birthDate = birthDate;
-	}
+    @Override
+    public String toString() {
+        return studentId + ":" + super.toString() + ":" + groupId;
+    }
 
-	public int getGroupId() {
-		return groupId;
-	}
-
-	public void setGroupId(int groupId) {
-		this.groupId = groupId;
-	}
-
-	
 }

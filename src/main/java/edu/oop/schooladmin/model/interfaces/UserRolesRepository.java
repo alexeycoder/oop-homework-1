@@ -1,5 +1,12 @@
 package edu.oop.schooladmin.model.interfaces;
 
-public class UserRolesRepository {
+public interface UserRolesRepository {
 	
+	// create
+
+	// read
+
+	// update
+
+	// delete
 }
