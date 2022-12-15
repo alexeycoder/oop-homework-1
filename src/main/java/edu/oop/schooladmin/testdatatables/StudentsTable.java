@@ -20,9 +20,25 @@ public class StudentsTable {
 			new Student(4, "Екатер", "Павлова", LocalDate.of(1997, 07, 30), 91),
 			new Student(5, "Екатер", "Калашникова", LocalDate.of(1997, 06, 12), 91),
 			new Student(6, "Павел", "Басов", LocalDate.of(1997, 9, 12), 92),
-			new Student(7, "Максим", "Козлов", LocalDate.of(1997, 11, 20), 92)
-		)
-	);
+			new Student(7, "Максим", "Козлов", LocalDate.of(1997, 11, 20), 92),
+			new Student(8, "Александр", "Рябинин", LocalDate.of(1997, 2, 15), 92),
+			new Student(9, "София", "Федорова", LocalDate.of(1997, 10, 4), 92),
+			new Student(10, "Элина", "Шарова", LocalDate.of(1997, 05, 17), 92),
+			new Student(11, "Дарья", "Сергеева", LocalDate.of(1997, 02, 24), 93),
+			new Student(12, "Анна", "Семенова", LocalDate.of(1997, 6, 01), 93),
+			new Student(13, "Василиса ", "Макарова", LocalDate.of(1997, 12, 3), 93),
+			new Student(14, "Василиса ", "Моисеева", LocalDate.of(1997, 12, 8), 93),
+			new Student(15, "Егор", "Глушков", LocalDate.of(1997, 10, 06), 93),
+			new Student(16, "Елизавета", "Михайлова", LocalDate.of(1996, 10, 11), 101),
+			new Student(17, "Михаил", "Исаев", LocalDate.of(1996, 10, 21), 101),
+			new Student(18, "Семён", "Цветков", LocalDate.of(1996, 5, 14), 101),
+			new Student(19, "Лидия", "Калинина", LocalDate.of(1996, 9, 7), 101),
+			new Student(20, "Майя", "Завьялова", LocalDate.of(1996, 5, 31), 101),
+			new Student(21, "Ульяна", "Чернова", LocalDate.of(1996, 9, 2), 102),
+			new Student(22, "Олеся", "Маркина", LocalDate.of(1996, 2, 27), 102),
+			new Student(23, "Марк", "Дроздов", LocalDate.of(1996, 10, 1), 102),
+			new Student(24, "Диана", "Фролова", LocalDate.of(1996, 1, 4), 102),
+			new Student(25, "Алёна", "Глушкова", LocalDate.of(1996, 5, 30), 102)));
 }
 
 /*
