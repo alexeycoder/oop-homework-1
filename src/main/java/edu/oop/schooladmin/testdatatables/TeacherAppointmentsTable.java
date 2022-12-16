@@ -6,7 +6,12 @@ import java.util.Arrays;
 import edu.oop.schooladmin.model.entities.TeacherAppointment;
 
 public class TeacherAppointmentsTable {
-	private static final ArrayList<TeacherAppointment> teachers = new ArrayList<>(
+
+	public static ArrayList<TeacherAppointment> Appointments() {
+		return Appointments;
+	}
+
+	private static final ArrayList<TeacherAppointment> Appointments = new ArrayList<>(
 		Arrays.asList(
 			new TeacherAppointment(1, 1, 1, 91),
 			new TeacherAppointment(2, 1, 2, 91),

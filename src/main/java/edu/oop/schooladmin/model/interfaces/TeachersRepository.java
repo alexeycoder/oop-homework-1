@@ -31,5 +31,5 @@ public interface TeachersRepository {
 
     // delete
 
-    Teacher removeTeacher(int teacherId);
+    boolean removeTeacher(int teacherId);
 }

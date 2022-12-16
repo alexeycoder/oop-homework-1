@@ -14,6 +14,11 @@ public class TestDbStudentsRepository implements StudentsRepository {
     private final ArrayList<Student> students;
     private int lastId;
 
+    public int getLastId() {
+        return lastId;
+    }
+
+
     public TestDbStudentsRepository() {
         students = StudentsTable.students();
         lastId = RepositoryUtils.getLastPrimaryKey(students, s -> s.getStudentId());
@@ -91,20 +96,22 @@ public class TestDbStudentsRepository implements StudentsRepository {
     }
 
     @Override
-    public Student removeStudent(int studentId) {
+    public boolean removeStudent(int studentId) {
         Student dbEntityToRemove = null;
+        Integer index = null;
         for (int i = 0; i < students.size(); i++) {
             var dbEntity = students.get(i);
             if (dbEntity.getStudentId().equals(studentId)) {
                 dbEntityToRemove = dbEntity;
+                index = i;
                 break;
             }
         }
         if (dbEntityToRemove != null) {
-            students.remove(studentId);
-            return dbEntityToRemove;
+            students.remove(index.intValue());
+            return true;
         } else
-            return null;
+            return false;
     }
 
     @Override
@@ -117,7 +124,7 @@ public class TestDbStudentsRepository implements StudentsRepository {
             }
         }
         if (index != null) {
-            students.set(index.intValue(), student);
+            students.set(index.intValue(), new Student(student));
             return true;
         } else
             return false;

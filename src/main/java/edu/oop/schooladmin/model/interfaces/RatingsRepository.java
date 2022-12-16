@@ -21,7 +21,7 @@ public interface RatingsRepository {
 
 	List<Rating> getRatingsByDateTime(LocalDateTime from, LocalDateTime to);
 
-	List<Rating> getRatingsByValue(int from, int to);
+	List<Rating> getRatingsByValue(int value);
 
 	// update
 
@@ -29,5 +29,5 @@ public interface RatingsRepository {
 
 	// delete
 
-	Rating removeRating(int ratingId);
+	boolean removeRating(int ratingId);
 }

@@ -6,8 +6,6 @@ public class Group {
 	private char classMark;
 	private Integer teacherId;
 
-	public Group() {
-	}
 
 	public Group(Integer groupId, int classYear, char classMark, Integer teacherId) {
 		this.groupId = groupId;
@@ -54,5 +52,10 @@ public class Group {
 
 	public void setTeacherId(Integer teacherId) {
 		this.teacherId = teacherId;
+	}
+
+	@Override
+	public String toString() {
+		return groupId + ":" + classYear + ":" + classMark + ":" + teacherId;
 	}
 }

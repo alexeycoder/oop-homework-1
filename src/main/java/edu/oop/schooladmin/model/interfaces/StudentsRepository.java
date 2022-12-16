@@ -31,5 +31,5 @@ public interface StudentsRepository {
 
     // delete
 
-    Student removeStudent(int studentId);
+    boolean removeStudent(int studentId);
 }

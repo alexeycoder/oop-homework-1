@@ -5,7 +5,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.oop.schooladmin.model.entities.Group;
 import edu.oop.schooladmin.model.entities.Teacher;
+import edu.oop.schooladmin.model.entities.TeacherAppointment;
 import edu.oop.schooladmin.model.interfaces.TeachersRepository;
 import edu.oop.schooladmin.testdatatables.TeachersTable;
 
@@ -13,10 +15,11 @@ public class TestDbTeachersRepository implements TeachersRepository {
     private final ArrayList<Teacher> teachers;
     private int lastId;
 
-    // TODO: Временный аксессор для теста.
-    public int lastId() {
+
+    public int getLastId() {
         return lastId;
     }
+
 
     public TestDbTeachersRepository() {
         teachers = TeachersTable.teachers();
@@ -100,20 +103,30 @@ public class TestDbTeachersRepository implements TeachersRepository {
     }
 
     @Override
-    public Teacher removeTeacher(int teacherId) {
+    public boolean removeTeacher(int teacherId) {
+        TestDbTeacherAppointmentsRepository appointmentsDb = new TestDbTeacherAppointmentsRepository();
+        TestDbGroupsRepository groupsDb = new TestDbGroupsRepository();
         Teacher dbEntityToRemove = null;
+        Integer index = null;
         for (int i = 0; i < teachers.size(); i++) {
             var dbEntity = teachers.get(i);
             if (dbEntity.getTeacherId().equals(teacherId)) {
                 dbEntityToRemove = dbEntity;
+                index = i;
                 break;
             }
         }
         if (dbEntityToRemove != null) {
-            teachers.remove(teacherId);
-            return dbEntityToRemove;
+            teachers.remove(index.intValue());
+            for (TeacherAppointment appointment : appointmentsDb.getTeacherAppointmentsByTeacherId(teacherId)) {
+                appointmentsDb.removeTeacherAppointment(appointment.getAppointmentId());
+            }
+            for (Group group : groupsDb.getGroupsByTeacherId(teacherId)) {
+                groupsDb.updateGroup(new Group(group.getGroupId(), group.getClassYear(), group.getClassMark(), null));
+            }
+            return true;
         } else
-            return null;
+            return false;
     }
 
     @Override
