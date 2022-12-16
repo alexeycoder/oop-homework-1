@@ -15,11 +15,9 @@ public class TestDbTeachersRepository implements TeachersRepository {
     private final ArrayList<Teacher> teachers;
     private int lastId;
 
-
     public int getLastId() {
         return lastId;
     }
-
 
     public TestDbTeachersRepository() {
         teachers = TeachersTable.teachers();
@@ -86,8 +84,24 @@ public class TestDbTeachersRepository implements TeachersRepository {
     }
 
     @Override
+    public List<Teacher> getTeachersByName(String nameSample) {
+        if (nameSample == null) {
+            return List.of();
+        }
+        nameSample = nameSample.strip();
+        if (nameSample.isBlank()) {
+            return List.of();
+        }
+        String[] substrings = nameSample.split("\\s+");
+        String regex = RepositoryUtils.getRegexForContainsAll(substrings);
+        return teachers.stream().filter(t -> (t.getFirstName() + " " + t.getLastName()).matches(regex))
+                .map(Teacher::new).toList();
+    }
+
+    @Override
     public List<Teacher> getTeachersByBirthDate(LocalDate from, LocalDate to) {
-        return teachers.stream().filter(d -> d.getBirthDate().isAfter(from) && d.getBirthDate().isBefore(to)).toList();
+        return teachers.stream().filter(d -> d.getBirthDate().isAfter(from) && d.getBirthDate().isBefore(to))
+                .map(Teacher::new).toList();
     }
 
     @Override

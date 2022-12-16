@@ -42,9 +42,9 @@ public class StudentsController extends ControllerBase {
 			var group = groupsRepo.getGroupById(student.getGroupId());
 			resultList.add(new StudentViewModel(student, group));
 		}
-
+		view.clear();
 		view.showList(resultList, "СПИСОК УЧЕНИКОВ:");
-		view.waitEnterToProceed();
+		view.waitToProceed();
 	}
 
 }

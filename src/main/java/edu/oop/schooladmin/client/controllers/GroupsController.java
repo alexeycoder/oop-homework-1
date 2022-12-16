@@ -40,8 +40,8 @@ public class GroupsController extends ControllerBase {
 			var teacher = teachersRepo.getTeacherById(group.getTeacherId());
 			resultList.add(new GroupViewModel(group, teacher));
 		}
-
+		view.clear();
 		view.showList(resultList, "СПИСОК ГРУПП:");
-		view.waitEnterToProceed();
+		view.waitToProceed();
 	}
 }

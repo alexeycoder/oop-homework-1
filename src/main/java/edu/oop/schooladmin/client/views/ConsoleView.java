@@ -2,7 +2,11 @@ package edu.oop.schooladmin.client.views;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.Scanner;
+import java.util.function.Function;
+
 import edu.oop.schooladmin.client.viewmodels.Commons;
 import edu.oop.schooladmin.client.viewmodels.ViewModelBase;
 import edu.oop.utils.Console;
@@ -15,11 +19,29 @@ public class ConsoleView implements ViewBase {
 			+ Console.PLEASE_REPEAT;
 	private static final String EXIT_APP_NOTE = "Вы завершили программу.";
 
+	@Override
+	public void clear() {
+		Console.clearScreen();
+	}
+
+	@Override
+	public void waitToProceed() {
+		System.out.println(PROMPT_ENTER);
+		SCANNER.nextLine();
+	}
+
+	@Override
 	public void showGoodbye() {
 		System.out.println();
 		System.out.println(EXIT_APP_NOTE);
 	}
 
+	@Override
+	public void showText(String text) {
+		System.out.println(text);
+	}
+
+	@Override
 	public void showMenu(Map<Object, String> menuModel) {
 
 		StringBuilder sb = new StringBuilder();
@@ -51,31 +73,59 @@ public class ConsoleView implements ViewBase {
 			}
 			sb.append("\n");
 		}
-
-		Console.clearScreen();
 		System.out.println(sb.toString());
 	}
 
+	@Override
+	public void showList(List<? extends ViewModelBase> viewModelsList, String title) {
+		StringBuilder sb = new StringBuilder("\n");
+		for (var viewModel : viewModelsList) {
+			sb.append(viewModel.toString()).append("\n");
+		}
+		System.out.println(title);
+		System.out.println(sb.toString());
+	}
+
+	@Override
+	public boolean askYesNo(String prompt, boolean isYesDefault) {
+		return Console.askYesNo(SCANNER, prompt, isYesDefault);
+	}
+
+	@Override
 	public Object askUserChoice(String askModel, Map<Object, String> menuModel) {
 		Object choice = Console.getUserInputVaryType(SCANNER, askModel, inp -> menuModel.containsKey(inp),
 				WARN_WRONG_MENU_ITEM);
 		return choice;
 	}
 
-	public void waitEnterToProceed() {
-		System.out.println(PROMPT_ENTER);
-		SCANNER.nextLine();
+	@Override
+	public OptionalInt askInteger(String prompt, Integer min, Integer max) {
+		Integer answer = Console.getUserInputIntRange(SCANNER, prompt, min, max);
+		if (answer != null) {
+			return OptionalInt.of(answer);
+		} else {
+			return OptionalInt.empty();
+		}
 	}
 
-	public void showList(List<? extends ViewModelBase> viewModelsList, String title) {
-		StringBuilder sb = new StringBuilder("\n");
-		for (var viewModel : viewModelsList) {
-			sb.append(viewModel.toString()).append("\n");
+	@Override
+	public OptionalInt askInteger(String prompt, Function<Integer, Boolean> checkValidity, String wrongWarn) {
+		Integer answer = Console.getUserInputInt(SCANNER, prompt, checkValidity, wrongWarn);
+		if (answer != null) {
+			return OptionalInt.of(answer);
+		} else {
+			return OptionalInt.empty();
 		}
+	}
 
-		Console.clearScreen();
-		System.out.println(title);
-		System.out.println(sb.toString());
+	@Override
+	public Optional<String> askString(String prompt, Function<String, Boolean> checkValidity, String wrongWarn) {
+		String answer = Console.getUserInput(SCANNER, prompt, checkValidity, wrongWarn);
+		if (answer != null) {
+			return Optional.<String>of(answer);
+		} else {
+			return Optional.<String>empty();
+		}
 	}
 
 }

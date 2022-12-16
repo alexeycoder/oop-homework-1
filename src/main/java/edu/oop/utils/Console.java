@@ -19,6 +19,30 @@ public class Console {
 	private static final String ERR_INT_TOO_LOW = "Число не должно быть меньше %d! " + PLEASE_REPEAT;
 	private static final String ERR_INT_TOO_HIGH = "Число не должно быть больше %d! " + PLEASE_REPEAT;
 
+	public static String getUserInput(Scanner inputScanner, String prompt,
+			Function<String, Boolean> checkIfValid, String wrongWarn) {
+
+		boolean wrong = false;
+		while (true) {
+			if (wrong) {
+				wrong = false;
+				if (wrongWarn != null) {
+					printError(wrongWarn, null);
+				}
+			}
+
+			System.out.println(prompt);
+			String inp = inputScanner.nextLine();
+			if (inp.isEmpty()) {
+				return null;
+			}
+			if (checkIfValid == null || checkIfValid.apply(inp)) {
+				return inp;
+			}
+			wrong = true;
+		}
+	}
+
 	public static Integer getUserInputInt(
 			Scanner inputScanner, String prompt,
 			Function<Integer, Boolean> checkIfValid,
@@ -40,7 +64,9 @@ public class Console {
 
 			System.out.print(prompt);
 			var rawInp = inputScanner.nextLine();
-			if (rawInp.toLowerCase().startsWith(EXIT_APP_CMD)) {
+			if (rawInp.isBlank()) {
+				return null;
+			} else if (rawInp.toLowerCase().startsWith(EXIT_APP_CMD)) {
 				forceExit();
 			}
 			var value = tryParseInt(rawInp);
@@ -85,7 +111,9 @@ public class Console {
 
 			System.out.print(prompt);
 			var rawInp = inputScanner.nextLine();
-			if (rawInp.toLowerCase().startsWith(EXIT_APP_CMD)) {
+			if (rawInp.isBlank()) {
+				return null;
+			} else if (rawInp.toLowerCase().startsWith(EXIT_APP_CMD)) {
 				forceExit();
 			}
 			var value = tryParseInt(rawInp);

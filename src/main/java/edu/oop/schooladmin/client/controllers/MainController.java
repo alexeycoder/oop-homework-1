@@ -36,7 +36,7 @@ public class MainController extends ControllerBase {
 			@Override
 			public void runLifecycle() {
 				System.out.println("Приветики. Тут пока ничего.");
-				view.waitEnterToProceed();
+				view.waitToProceed();
 			}
 
 			@Override

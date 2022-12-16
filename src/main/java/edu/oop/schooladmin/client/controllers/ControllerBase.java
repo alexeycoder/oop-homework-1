@@ -20,6 +20,7 @@ public abstract class ControllerBase {
 	public void runLifecycle() {
 		do {
 			var menuModel = getMenuModel();
+			view.clear();
 			view.showMenu(menuModel);
 			Object userChoice = view.askUserChoice(Commons.MENU_MAKE_YOUR_CHOICE, menuModel);
 			if (userChoice.equals(Commons.CMD_EXIT)) {
@@ -44,7 +45,7 @@ public abstract class ControllerBase {
 
 	protected void dummyAction() {
 		System.out.println("Приветики. Тут пока ничего.");
-		view.waitEnterToProceed();
+		view.waitToProceed();
 	}
 
 	protected void forceExit() {

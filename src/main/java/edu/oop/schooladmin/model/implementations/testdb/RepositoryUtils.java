@@ -12,4 +12,21 @@ public class RepositoryUtils {
 		}
 		return lastPk;
 	}
+
+	public static String getRegexForContainsAll(String[] substrings) {
+		StringBuilder sb = new StringBuilder("(?iu)^");
+		for (String str : substrings) {
+			sb.append("(?=.*?").append(str).append(")");
+		}
+		sb.append(".*");
+		return sb.toString();
+	}
+
+	// public static void main(String[] args) {
+	// String[] substrings = { "пет", "ано" };
+	// var regex = getRegexForContainsAll(substrings);
+	// var sample = "Петр Иванов";
+	// System.out.println(regex);
+	// System.out.println(sample.matches(regex));
+	// }
 }
