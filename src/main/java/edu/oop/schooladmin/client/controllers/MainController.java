@@ -1,5 +1,7 @@
 package edu.oop.schooladmin.client.controllers;
 
+import java.util.Map;
+
 import edu.oop.schooladmin.client.viewmodels.Commons;
 import edu.oop.schooladmin.client.views.ViewBase;
 import edu.oop.schooladmin.model.interfaces.DataProvider;
@@ -16,30 +18,34 @@ public class MainController extends ControllerBase {
 		this.groupsController = new GroupsController(dataProvider, viewManager);
 	}
 
-	public void runLifecycle() {
-		do {
-			var menuModel = Commons.MAIN_MENU;
-			view.showMenu(menuModel);
-			Object userChoice = view.askUserChoice(Commons.MENU_MAKE_YOUR_CHOICE, menuModel);
-			if (userChoice.equals(Commons.CMD_EXIT) || userChoice.equals(Commons.CMD_GO_BACK)) {
+	@Override
+	protected Map<Object, String> getMenuModel() {
+		return Commons.MAIN_MENU;
+	}
 
-				forceExit();
-
-			} else if (userChoice instanceof Integer menuId) {
-
-				var controller = selectController(menuId);
-				controller.runLifecycle();
-			}
-
-		} while (true);
+	@Override
+	protected void switchToAction(int menuId) {
+		var controller = selectController(menuId);
+		controller.runLifecycle();
 	}
 
 	private ControllerBase selectController(int menuId) {
+
 		var dummyController = new ControllerBase(dp, view) {
+
 			@Override
-			void runLifecycle() {
+			public void runLifecycle() {
 				System.out.println("Приветики. Тут пока ничего.");
 				view.waitEnterToProceed();
+			}
+
+			@Override
+			protected void switchToAction(int menuId) {
+			}
+
+			@Override
+			protected Map<Object, String> getMenuModel() {
+				return null;
 			}
 		};
 
@@ -54,4 +60,5 @@ public class MainController extends ControllerBase {
 			}
 		};
 	}
+
 }

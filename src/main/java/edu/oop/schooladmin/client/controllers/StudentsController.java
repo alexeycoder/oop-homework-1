@@ -1,6 +1,7 @@
 package edu.oop.schooladmin.client.controllers;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import edu.oop.schooladmin.client.viewmodels.Commons;
@@ -15,24 +16,12 @@ public class StudentsController extends ControllerBase {
 	}
 
 	@Override
-	void runLifecycle() {
-		do {
-			var menuModel = Commons.STUDENTS_MENU;
-			view.showMenu(menuModel);
-			Object userChoice = view.askUserChoice(Commons.MENU_MAKE_YOUR_CHOICE, menuModel);
-			if (userChoice.equals(Commons.CMD_EXIT)) {
-				forceExit();
-			} else if (userChoice.equals(Commons.CMD_GO_BACK)) {
-				return;
-			} else if (userChoice instanceof Integer menuId) {
-
-				switchToAction(menuId);
-			}
-
-		} while (true);
+	protected Map<Object, String> getMenuModel() {
+		return Commons.STUDENTS_MENU;
 	}
 
-	private void switchToAction(int menuId) {
+	@Override
+	protected void switchToAction(int menuId) {
 		switch (menuId) {
 			case 1 -> showAll();
 			case 2 -> dummyAction();
