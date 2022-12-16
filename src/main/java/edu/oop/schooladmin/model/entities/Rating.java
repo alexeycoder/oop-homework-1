@@ -33,6 +33,17 @@ public class Rating {
 				other.commentary);
 	}
 
+	public Rating(Integer studentId, Integer disciplineId, LocalDateTime dateTime, int value,
+	String commentary) {
+		this(
+				null,
+				studentId,
+				disciplineId,
+				dateTime,
+				value,
+				commentary);
+	}
+
 	public Integer getRatingId() {
 		return ratingId;
 	}
@@ -79,5 +90,10 @@ public class Rating {
 
 	public void setCommentary(String commentary) {
 		this.commentary = commentary;
+	}
+
+	@Override
+	public String toString() {
+		return ratingId + ":" + studentId + ":" + disciplineId + ":" + dateTime.toString() + ":" + value + ":" + commentary;
 	}
 }

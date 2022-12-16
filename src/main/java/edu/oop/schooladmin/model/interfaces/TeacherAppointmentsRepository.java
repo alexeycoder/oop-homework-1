@@ -11,11 +11,13 @@ public interface TeacherAppointmentsRepository {
 
 	// create
 
-	TeacherAppointment addTeacherAppointment(Teacher teacher, Discipline discipline, Group group);
+	boolean addTeacherAppointment(Teacher teacher, Discipline discipline, Group group);
 
 	// read
 
 	TeacherAppointment getTeacherAppointmentById(int teacherAppointmentId);
+
+	List<TeacherAppointment> getAllTeacherAppointments();
 
 	List<TeacherAppointment> getTeacherAppointmentsByTeacherId(int teacherId);
 
@@ -25,9 +27,9 @@ public interface TeacherAppointmentsRepository {
 
 	// update
 
-	boolean updateTeacherAppointment(TeacherAppointment teacherAppointment);
+	boolean updateTeacherAppointment(TeacherAppointment appointment);
 
 	// delete
 
-	TeacherAppointment removeTeacherAppointment(int teacherAppointmentId);
+	boolean removeTeacherAppointment(int appointmentId);
 }

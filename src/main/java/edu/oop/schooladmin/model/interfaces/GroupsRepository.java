@@ -12,11 +12,13 @@ public interface GroupsRepository {
 
 	// create
 
-	Group addGroup(Group group);
+	boolean addGroup(Group group);
 
 	// read
 
 	Group getGroupById(int groupId);
+
+	List<Group> getAllGroups();
 
 	List<Group> getGroupsByTeacherId(int teacherId);
 
@@ -32,5 +34,5 @@ public interface GroupsRepository {
 
 	// delete
 
-	Group deleteGroup(int groupId);
+	boolean removeGroup(int groupId);
 }
