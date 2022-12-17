@@ -24,7 +24,7 @@ public class StudentViewModel extends ViewModelBase {
 
 	@Override
 	public String toString() {
-		return String.format("%d\t%-14s %-14s\tРод. %s\tКласс %d-%s", id, firstName, lastName, birthDate, classYear,
+		return String.format("%d.\t%-14s %-14s\tРод. %s\tКласс %d-%s", id, firstName, lastName, birthDate, classYear,
 				classMark);
 	}
 

@@ -14,20 +14,15 @@ public class GroupViewModel extends ViewModelBase {
 		this.classYear = group.getClassYear();
 		this.classMark = group.getClassMark();
 		if (teacher != null) {
-			this.teacherInfo = teacherRepr(teacher);
+			this.teacherInfo = TeacherViewModel.teacherSimplifiedRepr(teacher);
 		} else {
 			this.teacherInfo = "не назначен";
 		}
 	}
 
-	private String teacherRepr(Teacher teacher) {
-		return String.format("%-14s %-14s (ID %d)", teacher.getFirstName(),
-				teacher.getLastName(), teacher.getTeacherId());
-	}
-
 	@Override
 	public String toString() {
-		String str = String.format("%d\t%d-%s\t Кл. руковод.: ", groupId, classYear, classMark);
+		String str = String.format("%d.\t%d-%s\t Кл. руковод.: ", groupId, classYear, classMark);
 		str += teacherInfo;
 		return str;
 	}

@@ -1,7 +1,6 @@
 package edu.oop.schooladmin.model.interfaces;
 
 public interface DataProvider {
-	
 
 	DisciplinesRepository disciplinesRepository();
 
@@ -18,4 +17,6 @@ public interface DataProvider {
 	UsersRepository usersRepository();
 
 	UserRolesRepository userRolesRepository();
+
+	CrossResolver crossResolver();
 }

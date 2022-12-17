@@ -33,7 +33,7 @@ public abstract class ControllerBase {
 
 			} else if (userChoice instanceof Integer menuId) {
 
-				switchToAction(menuId);
+				switchToAction(menuId, null);
 			}
 
 		} while (true);
@@ -41,7 +41,7 @@ public abstract class ControllerBase {
 
 	protected abstract Map<Object, String> getMenuModel();
 
-	protected abstract void switchToAction(int menuId);
+	protected abstract void switchToAction(int menuId, Integer entityId);
 
 	protected void dummyAction() {
 		System.out.println("Приветики. Тут пока ничего.");

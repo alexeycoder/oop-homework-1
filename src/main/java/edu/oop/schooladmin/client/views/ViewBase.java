@@ -37,7 +37,7 @@ public interface ViewBase {
 	 */
 	Object askUserChoice(String prompt, Map<Object, String> menuModel);
 
-	OptionalInt askInteger(String prompt, Integer max, Integer min);
+	OptionalInt askInteger(String prompt, Integer min, Integer max);
 
 	OptionalInt askInteger(String prompt, Function<Integer, Boolean> checkValidity, String wrongWarn);
 

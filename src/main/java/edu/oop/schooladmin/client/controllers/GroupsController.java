@@ -4,15 +4,22 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import edu.oop.schooladmin.client.controllers.MainController.ControllersBag;
 import edu.oop.schooladmin.client.viewmodels.Commons;
 import edu.oop.schooladmin.client.viewmodels.GroupViewModel;
 import edu.oop.schooladmin.client.views.ViewBase;
 import edu.oop.schooladmin.model.interfaces.DataProvider;
 
 public class GroupsController extends ControllerBase {
+	
+	private final ControllersBag controllersBag;
 
-	public GroupsController(DataProvider dataProvider, ViewBase viewManager) {
+	public GroupsController(DataProvider dataProvider, ViewBase viewManager, ControllersBag controllersBag) {
 		super(dataProvider, viewManager);
+		if (controllersBag == null) {
+			throw new NullPointerException("controllersBag");
+		}
+		this.controllersBag = controllersBag;
 	}
 
 	@Override
@@ -21,7 +28,7 @@ public class GroupsController extends ControllerBase {
 	}
 
 	@Override
-	protected void switchToAction(int menuId) {
+	protected void switchToAction(int menuId, Integer entityId) {
 		switch (menuId) {
 			case 1 -> showAll();
 			case 2 -> dummyAction();

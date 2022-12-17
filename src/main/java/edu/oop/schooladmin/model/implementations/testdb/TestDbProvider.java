@@ -1,7 +1,10 @@
 package edu.oop.schooladmin.model.implementations.testdb;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
+import edu.oop.schooladmin.model.entities.Teacher;
+import edu.oop.schooladmin.model.interfaces.CrossResolver;
 import edu.oop.schooladmin.model.interfaces.DataProvider;
 import edu.oop.schooladmin.model.interfaces.DisciplinesRepository;
 import edu.oop.schooladmin.model.interfaces.GroupsRepository;
@@ -16,19 +19,20 @@ public class TestDbProvider implements DataProvider {
 
 	private final DisciplinesRepository disciplinesRepository;
 	private final TeachersRepository teachersRepository;
-	private GroupsRepository groupsRepository;
-	private StudentsRepository studentsRepository;
-	private TeacherAppointmentsRepository teacherAppointmentsRepository;
-	private RatingsRepository ratingsRepository;
+	private final GroupsRepository groupsRepository;
+	private final StudentsRepository studentsRepository;
+	private final TeacherAppointmentsRepository teacherAppointmentsRepository;
+	private final RatingsRepository ratingsRepository;
+	private final CrossResolver crossResolver;
 
 	public TestDbProvider() {
 		this.disciplinesRepository = new TestDbDisciplinesRepository();
 		this.teachersRepository = new TestDbTeachersRepository();
 		this.groupsRepository = new TestDbGroupsRepository();
 		this.studentsRepository = new TestDbStudentsRepository();
-		// this.teacherAppointmentsRepository = new
-		// TestDbTeacherAppointmentsRepository();
-		// this.ratingsRepository = new TestDbRatingsRepository();
+		this.teacherAppointmentsRepository = new TestDbTeacherAppointmentsRepository();
+		this.ratingsRepository = new TestDbRatingsRepository();
+		this.crossResolver = new TestDbCrossResolver();
 	}
 
 	@Override
@@ -73,4 +77,20 @@ public class TestDbProvider implements DataProvider {
 		throw new NoSuchElementException();
 	}
 
+	@Override
+	public CrossResolver crossResolver() {
+		return crossResolver;
+	}
+
+	public class TestDbCrossResolver implements CrossResolver {
+
+		@Override
+		public List<Teacher> getTeachersByDisciplineId(int disciplineId) {
+			var appointments = teacherAppointmentsRepository
+					.getTeacherAppointmentsByDisciplineId(disciplineId);
+			var teachers = appointments.stream().mapToInt(a -> a.getTeacherId()).distinct().boxed()
+					.map(i -> teachersRepository.getTeacherById(i)).toList();
+			return teachers;
+		}
+	}
 }

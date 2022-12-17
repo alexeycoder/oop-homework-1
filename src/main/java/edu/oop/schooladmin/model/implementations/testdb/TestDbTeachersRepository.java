@@ -88,12 +88,11 @@ public class TestDbTeachersRepository implements TeachersRepository {
         if (nameSample == null) {
             return List.of();
         }
-        nameSample = nameSample.strip();
         if (nameSample.isBlank()) {
             return List.of();
         }
-        String[] substrings = nameSample.split("\\s+");
-        String regex = RepositoryUtils.getRegexForContainsAll(substrings);
+        
+        String regex = RepositoryUtils.getRegexContainsAll(nameSample);
         return teachers.stream().filter(t -> (t.getFirstName() + " " + t.getLastName()).matches(regex))
                 .map(Teacher::new).toList();
     }

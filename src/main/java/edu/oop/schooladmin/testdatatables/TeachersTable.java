@@ -12,7 +12,6 @@ public class TeachersTable {
 		return teachers;
 	}
 
-
 	private static final ArrayList<Teacher> teachers = new ArrayList<>(
 			Arrays.asList(
 					new Teacher(1, "Алиса", "Большакова", LocalDate.of(1978, 1, 29), 9),
