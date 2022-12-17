@@ -33,7 +33,7 @@ public class MainController extends ControllerBase {
 	}
 
 	@Override
-	protected void switchToAction(int menuId, Integer entityId) {
+	protected void switchToAction(int menuId, Object relatedEntity) {
 		var controller = selectController(menuId);
 		controller.runLifecycle();
 	}

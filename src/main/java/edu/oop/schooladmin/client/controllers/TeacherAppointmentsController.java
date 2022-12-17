@@ -14,6 +14,8 @@ import edu.oop.schooladmin.client.viewmodels.TeacherViewModel;
 import edu.oop.schooladmin.client.views.ViewBase;
 import edu.oop.schooladmin.model.entities.Discipline;
 import edu.oop.schooladmin.model.entities.Group;
+import edu.oop.schooladmin.model.entities.Teacher;
+import edu.oop.schooladmin.model.entities.TeacherAppointment;
 import edu.oop.schooladmin.model.interfaces.DataProvider;
 
 public class TeacherAppointmentsController extends ControllerBase {
@@ -35,14 +37,14 @@ public class TeacherAppointmentsController extends ControllerBase {
 	}
 
 	@Override
-	protected void switchToAction(int menuId, Integer entityId) {
+	protected void switchToAction(int menuId, Object relatedEntity) {
 		switch (menuId) {
 			case 1 -> showAll();
-			case 2 -> showByTeacher(entityId);
-			case 3 -> showByDiscipline(entityId);
-			case 4 -> showByGroup(entityId);
-			case 5 -> edit(entityId);
-			case 6 -> delete(entityId);
+			case 2 -> showByTeacher(relatedEntity instanceof Teacher ? (Teacher) relatedEntity : null);
+			case 3 -> showByDiscipline(relatedEntity instanceof Discipline ? (Discipline) relatedEntity : null);
+			case 4 -> showByGroup(relatedEntity instanceof Group ? (Group) relatedEntity : null);
+			case 5 -> edit(relatedEntity instanceof TeacherAppointment ? (TeacherAppointment) relatedEntity : null);
+			case 6 -> delete(relatedEntity instanceof TeacherAppointment ? (TeacherAppointment) relatedEntity : null);
 			default -> throw new NoSuchElementException();
 		}
 	}
@@ -66,30 +68,31 @@ public class TeacherAppointmentsController extends ControllerBase {
 		view.waitToProceed();
 	}
 
-	private void showByTeacher(Integer entityId) {
-		view.clear();
+	private void showByTeacher(Teacher teacher) {
 		view.showText("НАЗНАЧЕНИЯ ПО УЧИТЕЛЮ:");
 
-		if (entityId == null) {
+		while (teacher == null) {
+			view.clear();
+			view.showText("НАЗНАЧЕНИЯ ПО УЧИТЕЛЮ:");
+
 			var answer = view.askInteger("Введите ID учителя (или пустой Ввод для отмены): ", 0, null);
 			if (answer.isEmpty()) {
 				return;
 			}
-			entityId = answer.getAsInt();
-		}
+			int teacherId = answer.getAsInt();
+			var teachersRepo = dp.teachersRepository();
+			teacher = teachersRepo.getTeacherById(teacherId);
 
-		var teachersRepo = dp.teachersRepository();
-		var teacher = teachersRepo.getTeacherById(entityId);
-		if (teacher == null) {
-			view.showText(String.format("Учителя не найдено для заданного ID %d", entityId));
-			view.waitToProceed();
-			return;
+			if (teacher == null && !view.askYesNo("Учителя не найдено. Повторить поиск? (Y/n)", true)) {
+				view.waitToProceed();
+				return;
+			}
 		}
 
 		view.showText(TeacherViewModel.teacherSimplifiedRepr(teacher));
 
 		var appointmentsRepo = dp.teacherAppointmentsRepository();
-		var appointments = appointmentsRepo.getTeacherAppointmentsByTeacherId(entityId);
+		var appointments = appointmentsRepo.getTeacherAppointmentsByTeacherId(teacher.getTeacherId());
 		if (appointments.size() == 0) {
 			view.showText("Назначений нет.");
 		} else {
@@ -108,39 +111,37 @@ public class TeacherAppointmentsController extends ControllerBase {
 		view.waitToProceed();
 	}
 
-	private void showByDiscipline(Integer entityId) {
-		view.clear();
+	private void showByDiscipline(Discipline discipline) {
 		view.showText("НАЗНАЧЕНИЯ ПО ПРЕДМЕТУ:");
 
-		var disciplinesRepo = dp.disciplinesRepository();
-		Discipline discipline = null;
+		while (discipline == null) {
+			view.clear();
+			view.showText("НАЗНАЧЕНИЯ ПО ПРЕДМЕТУ:");
 
-		if (entityId == null) {
-			var answer = view.askString("Введите название или ID предмета (или пустой Ввод для отмены): ", null, null);
+			var answer = view.askString("Введите название или ID предмета (или пустой Ввод для отмены): ", null,
+					null);
 			if (answer.isEmpty()) {
 				return;
 			}
 			String rawStrAnswer = answer.get();
+			var disciplinesRepo = dp.disciplinesRepository();
 			if (rawStrAnswer.matches("^\\d+$")) { // проверка если на неотрицательное целое число
-				entityId = Integer.parseInt(rawStrAnswer);
+				int disciplineId = Integer.parseInt(rawStrAnswer);
+				discipline = disciplinesRepo.getDisciplineById(disciplineId);
 			} else { // иначе пытаемся искать по наименованию
 				discipline = disciplinesRepo.getDisciplineByName(rawStrAnswer);
-				if (discipline != null) {
-					entityId = discipline.getDisciplineId();
-				}
 			}
-		}
 
-		if (entityId == null || ((discipline = disciplinesRepo.getDisciplineById(entityId)) == null)) {
-			view.showText("Предмета не найдено.");
-			view.waitToProceed();
-			return;
+			if (discipline == null && !view.askYesNo("Предмет не найден. Повторить поиск? (Y/n)", true)) {
+				view.waitToProceed();
+				return;
+			}
 		}
 
 		view.showText(DisciplineViewModel.disciplineSimplifiedRept(discipline));
 
 		var appointmentsRepo = dp.teacherAppointmentsRepository();
-		var appointments = appointmentsRepo.getTeacherAppointmentsByDisciplineId(entityId);
+		var appointments = appointmentsRepo.getTeacherAppointmentsByDisciplineId(discipline.getDisciplineId());
 		if (appointments.size() == 0) {
 			view.showText("Назначений нет.");
 		} else {
@@ -159,27 +160,27 @@ public class TeacherAppointmentsController extends ControllerBase {
 		view.waitToProceed();
 	}
 
-	private void showByGroup(Integer entityId) {
-		view.clear();
+	private void showByGroup(Group group) {
 		view.showText("НАЗНАЧЕНИЯ ПО ГРУППЕ (КЛАССУ):");
 
-		var groupsRepo = dp.groupsRepository();
-		Group group = null;
+		while (group == null) {
+			view.clear();
+			view.showText("НАЗНАЧЕНИЯ ПО ГРУППЕ (КЛАССУ):");
 
-		if (entityId == null) {
 			var answer = view.askInteger("Введите номер учебного года (или пустой Ввод для отмены): ", 1, null);
 			if (answer.isEmpty()) {
 				return;
 			}
 			int classYear = answer.getAsInt();
+			var groupsRepo = dp.groupsRepository();
 			var selectionByYear = groupsRepo.getGroupsByClassYear(classYear);
 			if (selectionByYear.size() == 0) {
 				view.showText("Групп по заданному учебному году не найдено.");
-				view.waitToProceed();
-				return;
+				continue;
 			}
 
-			var answer2 = view.askString("Введите букву класса (или пустой Ввод для отмены): ", s -> s.length() == 1,
+			var answer2 = view.askString("Введите букву класса (или пустой Ввод для отмены): ",
+					s -> s.length() == 1,
 					null);
 			if (answer2.isEmpty()) {
 				return;
@@ -189,23 +190,21 @@ public class TeacherAppointmentsController extends ControllerBase {
 					.filter(g -> Character.toUpperCase(g.getClassMark()) == classMark).toList();
 			if (selectionByLetter.size() > 0) {
 				group = selectionByLetter.get(0);
-				entityId = group.getGroupId();
 				if (selectionByLetter.size() > 1) {
 					view.showText("Предупреждение: В базе найдено несколько идентичных групп!");
 				}
 			}
-		}
 
-		if (entityId == null || ((group = groupsRepo.getGroupById(entityId)) == null)) {
-			view.showText("Предмета не найдено");
-			view.waitToProceed();
-			return;
+			if (group == null && !view.askYesNo("Группа не найдена. Повторить поиск? (Y/n)", true)) {
+				view.waitToProceed();
+				return;
+			}
 		}
 
 		view.showText(GroupViewModel.groupSimplifiedRepr(group));
 
 		var appointmentsRepo = dp.teacherAppointmentsRepository();
-		var appointments = appointmentsRepo.getTeacherAppointmentsByGroupId(entityId);
+		var appointments = appointmentsRepo.getTeacherAppointmentsByGroupId(group.getGroupId());
 		if (appointments.size() == 0) {
 			view.showText("Назначений нет.");
 		} else {
@@ -224,9 +223,12 @@ public class TeacherAppointmentsController extends ControllerBase {
 		view.waitToProceed();
 	}
 
-	private void edit(Integer entityId) {
+	private void edit(TeacherAppointment appointment) {
+		if (appointment == null) {
+
+		}
 	}
 
-	private void delete(Integer entityId) {
+	private void delete(TeacherAppointment appointment) {
 	}
 }

@@ -28,7 +28,7 @@ public class RatingsController extends ControllerBase {
 	}
 
 	@Override
-	protected void switchToAction(int menuId, Integer entityId) {
+	protected void switchToAction(int menuId, Object relatedEntity) {
 		dummyAction();
 	}
 

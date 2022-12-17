@@ -1,6 +1,7 @@
 package edu.oop.schooladmin.client.controllers;
 
 import java.util.Map;
+import java.util.OptionalInt;
 
 import edu.oop.schooladmin.client.viewmodels.Commons;
 import edu.oop.schooladmin.client.views.ViewBase;
@@ -41,7 +42,7 @@ public abstract class ControllerBase {
 
 	protected abstract Map<Object, String> getMenuModel();
 
-	protected abstract void switchToAction(int menuId, Integer entityId);
+	protected abstract void switchToAction(int menuId, Object relatedEntity);
 
 	protected void dummyAction() {
 		System.out.println("Приветики. Тут пока ничего.");
@@ -51,5 +52,18 @@ public abstract class ControllerBase {
 	protected void forceExit() {
 		view.showGoodbye();
 		System.exit(0);
+	}
+
+	protected OptionalInt findSuitableMenuId(Map<Object, String> menuModel, String stringSample) {
+		assert menuModel != null && stringSample != null && !stringSample.isEmpty();
+
+		final String sample = stringSample.toLowerCase();
+
+		var key = menuModel.entrySet().stream()
+				.filter(entry -> entry.getValue() != null && entry.getValue().contains(sample)).findFirst();
+		if (key.isPresent() && key.get().getKey() instanceof Integer menuId) {
+			return OptionalInt.of(menuId);
+		}
+		return OptionalInt.empty();
 	}
 }

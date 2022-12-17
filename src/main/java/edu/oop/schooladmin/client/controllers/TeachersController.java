@@ -32,11 +32,11 @@ public class TeachersController extends ControllerBase {
 	}
 
 	@Override
-	protected void switchToAction(int menuId, Integer entityId) {
+	protected void switchToAction(int menuId, Object relatedEntity) {
 		switch (menuId) {
 			case 1 -> showAll();
 			case 2 -> showOneById();
-			case 3 -> showOneByName();
+			case 3 -> showAllByName();
 			case 4 -> addNew();
 			case 5 -> dummyAction();
 			case 6 -> dummyAction();
@@ -80,10 +80,20 @@ public class TeachersController extends ControllerBase {
 			TeacherViewModel viewModel = new TeacherViewModel(teacher, groups);
 			view.showList(List.of(viewModel), "Найдена запись:");
 
+			if (view.askYesNo("Показать назначения учителя? (Y/n)", true)) {
+				var possibleMenuId = findSuitableMenuId(Commons.TEACHER_APPOINTMENTS_MENU, "учител");
+				if (possibleMenuId.isPresent()) {
+					var appointmentsController = controllersBag.teacherAppointmentsController();
+					appointmentsController.switchToAction(possibleMenuId.getAsInt(), teacher);
+				} else {
+					view.showText("Что-то пошло не так.");
+				}
+			}
+
 		} while (view.askYesNo("Повторить поиск? (Y/n)", true));
 	}
 
-	private void showOneByName() {
+	private void showAllByName() {
 		view.clear();
 		view.showText("ПОИСК УЧИТЕЛЯ ПО ИМЕНИ/ФАМИЛИИ");
 		do {
