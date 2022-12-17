@@ -35,4 +35,8 @@ public class DisciplineViewModel extends ViewModelBase {
 		}
 		return str;
 	}
+
+	public static String disciplineSimplifiedRept(Discipline discipline) {
+		return String.format("(ID %d) %s", discipline.getDisciplineId(), discipline.getName());
+	}
 }

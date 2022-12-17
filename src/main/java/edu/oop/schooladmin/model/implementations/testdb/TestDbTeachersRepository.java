@@ -61,6 +61,7 @@ public class TestDbTeachersRepository implements TeachersRepository {
         return null;
     }
 
+    @Deprecated
     @Override
     public List<Teacher> getTeachersByFirstName(String firstName) {
         List<Teacher> resultList = new ArrayList<>();
@@ -72,6 +73,7 @@ public class TestDbTeachersRepository implements TeachersRepository {
         return resultList;
     }
 
+    @Deprecated
     @Override
     public List<Teacher> getTeachersByLastName(String lastName) {
         List<Teacher> resultList = new ArrayList<>();

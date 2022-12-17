@@ -18,7 +18,6 @@ public class TestDbStudentsRepository implements StudentsRepository {
         return lastId;
     }
 
-
     public TestDbStudentsRepository() {
         students = StudentsTable.students();
         lastId = RepositoryUtils.getLastPrimaryKey(students, s -> s.getStudentId());
@@ -76,7 +75,22 @@ public class TestDbStudentsRepository implements StudentsRepository {
 
     @Override
     public List<Student> getStudentsByLastName(String lastName) {
-        return students.stream().filter(d -> lastName.equalsIgnoreCase(d.getLastName())).toList();
+        return students.stream().filter(d -> lastName.equalsIgnoreCase(d.getLastName()))
+                .map(Student::new).toList();
+    }
+
+    @Override
+    public List<Student> getStudentByName(String nameSample) {
+        if (nameSample == null) {
+            return List.of();
+        }
+        if (nameSample.isBlank()) {
+            return List.of();
+        }
+
+        String regex = RepositoryUtils.getRegexContainsAll(nameSample);
+        return students.stream().filter(s -> (s.getFirstName() + " " + s.getLastName()).matches(regex))
+                .map(Student::new).toList();
     }
 
     @Override

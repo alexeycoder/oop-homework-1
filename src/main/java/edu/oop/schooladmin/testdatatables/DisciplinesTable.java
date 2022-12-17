@@ -11,6 +11,14 @@ public class DisciplinesTable {
 		return disciplines;
 	}
 
+	public static void read(){
+
+	}
+
+	public static void save(ArrayList<Discipline> disciplines){
+
+	}
+
 	private static final ArrayList<Discipline> disciplines = new ArrayList<>(
 			Arrays.asList(
 					new Discipline(1, "Алгебра"),

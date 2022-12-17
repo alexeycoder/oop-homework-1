@@ -48,7 +48,11 @@ public class TestDbDisciplinesRepository implements DisciplinesRepository {
 
 	@Override
 	public Discipline getDisciplineByName(String disciplineName) {
-		var dbEntity = disciplines.stream().filter(d -> disciplineName.equalsIgnoreCase(d.getName())).findFirst();
+		if (disciplineName == null || disciplineName.isEmpty()) {
+			throw new InvalidParameterException("disciplineName");
+		}
+		final String dName = disciplineName.toLowerCase();
+		var dbEntity = disciplines.stream().filter(d -> d.getName().toLowerCase().contains(dName)).findFirst();
 		if (dbEntity.isPresent()) {
 			return new Discipline(dbEntity.get());
 		}

@@ -32,12 +32,4 @@ public class RepositoryUtils {
 		sb.append(".*");
 		return sb.toString();
 	}
-
-	// public static void main(String[] args) {
-	// String[] substrings = { "пет", "ано" };
-	// var regex = getRegexContainsAll(substrings);
-	// var sample = "Петр Иванов";
-	// System.out.println(regex);
-	// System.out.println(sample.matches(regex));
-	// }
 }

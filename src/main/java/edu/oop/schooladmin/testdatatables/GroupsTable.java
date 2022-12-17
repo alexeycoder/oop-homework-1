@@ -17,4 +17,8 @@ public class GroupsTable {
 			new Group(93, 9, 'В', 8),
 			new Group(101, 11, 'А', 4),
 			new Group(102, 11, 'Б', 5)));
+
+	public static void main(String[] args) {
+
+	}
 }

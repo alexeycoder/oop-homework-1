@@ -46,7 +46,10 @@ public class ConsoleView implements ViewBase {
 
 		StringBuilder sb = new StringBuilder();
 		if (menuModel.containsKey(Commons.HEADER_KEY)) {
-			sb.append(menuModel.get(Commons.HEADER_KEY)).append("\n\n");
+			var header = menuModel.get(Commons.HEADER_KEY);
+			if (header != null && !header.isEmpty()) {
+				sb.append(header).append("\n\n");
+			}
 		}
 
 		int maxKey = menuModel.keySet().stream().filter(o -> o instanceof Integer)
@@ -82,7 +85,9 @@ public class ConsoleView implements ViewBase {
 		for (var viewModel : viewModelsList) {
 			sb.append(viewModel.toString()).append("\n");
 		}
-		System.out.println(title);
+		if (title != null && !title.isEmpty()) {
+			System.out.println(title);
+		}
 		System.out.println(sb.toString());
 	}
 

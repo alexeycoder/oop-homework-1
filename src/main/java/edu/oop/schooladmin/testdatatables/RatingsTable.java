@@ -7,7 +7,8 @@ import java.util.Arrays;
 import edu.oop.schooladmin.model.entities.Rating;
 
 /*
- * LocalDateTime.of(2021,9,15, 0,0).toString()  <---> LocalDateTime.parse()
+ * LocalDateTime.of(2021,9,15, 0,0).toString()  <---> LocalDateTime.parse("2021-09-15 00:00")
+ * 1;7;2;2021-09-15 00:00;4;
  */
 
 public class RatingsTable {
