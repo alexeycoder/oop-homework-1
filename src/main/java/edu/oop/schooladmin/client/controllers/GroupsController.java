@@ -1,39 +1,34 @@
 package edu.oop.schooladmin.client.controllers;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
+import edu.oop.schooladmin.client.controllers.MainController.ControllersBag;
 import edu.oop.schooladmin.client.viewmodels.Commons;
 import edu.oop.schooladmin.client.viewmodels.GroupViewModel;
-import edu.oop.schooladmin.client.viewmodels.TeacherViewModel;
 import edu.oop.schooladmin.client.views.ViewBase;
 import edu.oop.schooladmin.model.interfaces.DataProvider;
 
 public class GroupsController extends ControllerBase {
+	
+	private final ControllersBag controllersBag;
 
-	public GroupsController(DataProvider dataProvider, ViewBase viewManager) {
+	public GroupsController(DataProvider dataProvider, ViewBase viewManager, ControllersBag controllersBag) {
 		super(dataProvider, viewManager);
+		if (controllersBag == null) {
+			throw new NullPointerException("controllersBag");
+		}
+		this.controllersBag = controllersBag;
 	}
 
 	@Override
-	void runLifecycle() {
-		do {
-			var menuModel = Commons.GROUPS_MENU;
-			view.showMenu(menuModel);
-			Object userChoice = view.askUserChoice(Commons.MENU_MAKE_YOUR_CHOICE, menuModel);
-			if (userChoice.equals(Commons.CMD_EXIT)) {
-				forceExit();
-			} else if (userChoice.equals(Commons.CMD_GO_BACK)) {
-				return;
-			} else if (userChoice instanceof Integer menuId) {
-
-				switchToAction(menuId);
-			}
-
-		} while (true);
+	protected Map<Object, String> getMenuModel() {
+		return Commons.GROUPS_MENU;
 	}
 
-	private void switchToAction(int menuId) {
+	@Override
+	protected void switchToAction(int menuId, Integer entityId) {
 		switch (menuId) {
 			case 1 -> showAll();
 			case 2 -> dummyAction();
@@ -52,8 +47,8 @@ public class GroupsController extends ControllerBase {
 			var teacher = teachersRepo.getTeacherById(group.getTeacherId());
 			resultList.add(new GroupViewModel(group, teacher));
 		}
-
+		view.clear();
 		view.showList(resultList, "СПИСОК ГРУПП:");
-		view.waitEnterToProceed();
+		view.waitToProceed();
 	}
 }

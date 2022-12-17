@@ -6,15 +6,15 @@ import java.util.NoSuchElementException;
 
 import edu.oop.schooladmin.client.controllers.MainController.ControllersBag;
 import edu.oop.schooladmin.client.viewmodels.Commons;
-import edu.oop.schooladmin.client.viewmodels.StudentViewModel;
+import edu.oop.schooladmin.client.viewmodels.DisciplineViewModel;
 import edu.oop.schooladmin.client.views.ViewBase;
 import edu.oop.schooladmin.model.interfaces.DataProvider;
 
-public class StudentsController extends ControllerBase {
+public class DisciplinesController extends ControllerBase {
 	
 	private final ControllersBag controllersBag;
 
-	public StudentsController(DataProvider dataProvider, ViewBase viewManager, ControllersBag controllersBag) {
+	public DisciplinesController(DataProvider dataProvider, ViewBase viewManager, ControllersBag controllersBag) {
 		super(dataProvider, viewManager);
 		if (controllersBag == null) {
 			throw new NullPointerException("controllersBag");
@@ -24,7 +24,7 @@ public class StudentsController extends ControllerBase {
 
 	@Override
 	protected Map<Object, String> getMenuModel() {
-		return Commons.STUDENTS_MENU;
+		return Commons.DISCIPLINES_MENU;
 	}
 
 	@Override
@@ -41,17 +41,17 @@ public class StudentsController extends ControllerBase {
 	}
 
 	private void showAll() {
-		ArrayList<StudentViewModel> resultList = new ArrayList<>();
+		ArrayList<DisciplineViewModel> resultList = new ArrayList<>();
 
-		var studentsRepo = dp.studentsRepository();
-		var groupsRepo = dp.groupsRepository();
-		for (var student : studentsRepo.getAllStudents()) {
-			var group = groupsRepo.getGroupById(student.getGroupId());
-			resultList.add(new StudentViewModel(student, group));
+		var disciplinesRepository = dp.disciplinesRepository();
+		var crossResolver = dp.crossResolver();
+
+		for (var discipline : disciplinesRepository.getAllDisciplines()) {
+			var teachers = crossResolver.getTeachersByDisciplineId(discipline.getDisciplineId());
+			resultList.add(new DisciplineViewModel(discipline, teachers));
 		}
 		view.clear();
-		view.showList(resultList, "СПИСОК УЧЕНИКОВ:");
+		view.showList(resultList, "ПРЕДМЕТЫ:");
 		view.waitToProceed();
 	}
-
 }

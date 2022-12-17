@@ -52,4 +52,34 @@ public class Commons {
 
 			CMD_GO_BACK, "Вернуться в главное меню",
 			CMD_EXIT, "Завершить работу");
+
+	public static final Map<Object, String> DISCIPLINES_MENU = Map.of(
+			HEADER_KEY, "ПРЕДМЕТЫ",
+			1, "Вывести список всех предметов",
+			2, "Добавить предмет",
+			3, "Редактировать предмет",
+			4, "Удалить предмет",
+
+			CMD_GO_BACK, "Вернуться в главное меню",
+			CMD_EXIT, "Завершить работу");
+
+	public static final Map<Object, String> TEACHER_APPOINTMENTS_MENU = Map.of(
+			HEADER_KEY, "НАЗНАЧЕНИЯ УЧИТЕЛЕЙ",
+			1, "Вывести список всех назначений",
+			2, "Добавить назначение",
+			3, "Редактировать назначение",
+			4, "Удалить назначение",
+
+			CMD_GO_BACK, "Вернуться в главное меню",
+			CMD_EXIT, "Завершить работу");
+
+	public static final Map<Object, String> RATINGS_MENU = Map.of(
+			HEADER_KEY, "ЖУРНАЛ ОЦЕНОК",
+			1, "Все оценки в хронолигическом порядке",
+			2, "Добавить оценку",
+			3, "Редактировать оценку",
+			4, "Удалить оценку",
+
+			CMD_GO_BACK, "Вернуться в главное меню",
+			CMD_EXIT, "Завершить работу");
 }

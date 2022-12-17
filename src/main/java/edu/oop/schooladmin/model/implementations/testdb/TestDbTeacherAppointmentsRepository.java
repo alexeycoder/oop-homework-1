@@ -14,17 +14,16 @@ import edu.oop.schooladmin.testdatatables.TeacherAppointmentsTable;
 public class TestDbTeacherAppointmentsRepository implements TeacherAppointmentsRepository {
 
     private final ArrayList<TeacherAppointment> appointments;
-	private int lastId;
-
+    private int lastId;
 
     public int getLastId() {
         return lastId;
     }
 
     public TestDbTeacherAppointmentsRepository() {
-		appointments = TeacherAppointmentsTable.Appointments();
-		lastId = RepositoryUtils.getLastPrimaryKey(appointments, a -> a.getAppointmentId());
-	}
+        appointments = TeacherAppointmentsTable.Appointments();
+        lastId = RepositoryUtils.getLastPrimaryKey(appointments, a -> a.getAppointmentId());
+    }
 
     @Override
     public boolean addTeacherAppointment(Teacher teacher, Discipline discipline, Group group) {
@@ -32,21 +31,20 @@ public class TestDbTeacherAppointmentsRepository implements TeacherAppointmentsR
         TestDbGroupsRepository groupsDb = new TestDbGroupsRepository();
         TestDbDisciplinesRepository disciplinesDb = new TestDbDisciplinesRepository();
         if (teachersDb.getTeacherById(teacher.getTeacherId()) != null &&
-            disciplinesDb.getDisciplineById(discipline.getDisciplineId()) != null &&
-            groupsDb.getGroupById(group.getGroupId()) != null)
-            {
-                TeacherAppointment appointment = new TeacherAppointment(++lastId,
-                                                                        teacher.getTeacherId(),
-                                                                        discipline.getDisciplineId(),
-                                                                        group.getGroupId());
-                appointments.add(appointment);
-                return true;
-            }
-        else return false;
+                disciplinesDb.getDisciplineById(discipline.getDisciplineId()) != null &&
+                groupsDb.getGroupById(group.getGroupId()) != null) {
+            TeacherAppointment appointment = new TeacherAppointment(++lastId,
+                    teacher.getTeacherId(),
+                    discipline.getDisciplineId(),
+                    group.getGroupId());
+            appointments.add(appointment);
+            return true;
+        } else
+            return false;
     }
 
     @Override
-    public List<TeacherAppointment> getAllTeacherAppointments(){
+    public List<TeacherAppointment> getAllTeacherAppointments() {
         List<TeacherAppointment> resultList = new ArrayList<>();
         for (TeacherAppointment appointment : appointments) {
             resultList.add(new TeacherAppointment(appointment));
@@ -65,6 +63,8 @@ public class TestDbTeacherAppointmentsRepository implements TeacherAppointmentsR
 
     @Override
     public List<TeacherAppointment> getTeacherAppointmentsByTeacherId(int teacherId) {
+        // return appointments.stream().filter(a -> a.getTeacherId().equals(teacherId))
+        // .map(TeacherAppointment::new).toList();
         List<TeacherAppointment> resultList = new ArrayList<>();
         for (TeacherAppointment appointment : appointments) {
             if (appointment.getTeacherId().equals(teacherId)) {
@@ -108,14 +108,14 @@ public class TestDbTeacherAppointmentsRepository implements TeacherAppointmentsR
                 break;
             }
         }
-        if (teachersDb.getTeacherById(appointment.getTeacherId()) != null && 
-            disciplinesDb.getDisciplineById(appointment.getDisciplineId()) != null &&
-            groupsDb.getGroupById(appointment.getGroupId()) != null &&
-            index != null){
+        if (teachersDb.getTeacherById(appointment.getTeacherId()) != null &&
+                disciplinesDb.getDisciplineById(appointment.getDisciplineId()) != null &&
+                groupsDb.getGroupById(appointment.getGroupId()) != null &&
+                index != null) {
             appointments.set(index.intValue(), new TeacherAppointment(appointment));
             return true;
-        }
-        else return false;
+        } else
+            return false;
     }
 
     @Override
@@ -155,5 +155,5 @@ public class TestDbTeacherAppointmentsRepository implements TeacherAppointmentsR
         instanceTo.setTeacherId(instanceFrom.getTeacherId());
         return instanceTo;
     }
-    
+
 }

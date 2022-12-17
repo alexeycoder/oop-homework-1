@@ -33,7 +33,8 @@ public class TeacherViewModel extends ViewModelBase {
 
 	@Override
 	public String toString() {
-		String str = String.format("%d\t%-14s %-14s\tРод. %s\tКатегория %d", id, firstName, lastName, birthDate, grade);
+		String str = String.format("%d.\t%-14s %-14s\tРод. %s\tКатегория %d", id, firstName, lastName, birthDate,
+				grade);
 		if (groupsInfo != null) {
 			str += "\tКл. руков.:";
 			for (String gi : groupsInfo) {
@@ -41,5 +42,10 @@ public class TeacherViewModel extends ViewModelBase {
 			}
 		}
 		return str;
+	}
+
+	public static String teacherSimplifiedRepr(Teacher teacher) {
+		return String.format("%-14s %-14s (ID %d)", teacher.getFirstName(),
+				teacher.getLastName(), teacher.getTeacherId());
 	}
 }
