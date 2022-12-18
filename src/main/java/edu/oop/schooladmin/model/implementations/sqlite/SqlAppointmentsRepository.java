@@ -14,23 +14,27 @@ import edu.oop.schooladmin.model.interfaces.TeacherAppointmentsRepository;
 public class SqlAppointmentsRepository implements TeacherAppointmentsRepository {
 
     @Override
-    public boolean addTeacherAppointment(Teacher teacher, Discipline discipline, Group group) {
+    public TeacherAppointment addTeacherAppointment(Teacher teacher, Discipline discipline, Group group) {
+        TeacherAppointment teacherAppointment = new TeacherAppointment(null, teacher.getTeacherId(),
+                discipline.getDisciplineId(), group.getGroupId());
         RepositoryUtils utils = new RepositoryUtils();
-        String sql = "INSERT INTO TeacherAppointments( 'teacherId', 'disciplineId', 'groupId') "+
-        "VALUES( ?, ?, ?);";
+        String sql = "INSERT INTO TeacherAppointments( 'teacherId', 'disciplineId', 'groupId') " +
+                "VALUES( ?, ?, ?);";
         List<Object> parametersList = new ArrayList<>();
         parametersList.add(teacher.getTeacherId());
         parametersList.add(discipline.getDisciplineId());
         parametersList.add(group.getGroupId());
 
         utils.setTable(sql, parametersList);
-        return true;
+        // TODO: Необходимо обновить фактически выданный БД appointmentId в возвращаемом
+        // экземпляре:
+        return teacherAppointment;
     }
 
     public boolean addTeacherAppointment(TeacherAppointment appointment) {
         RepositoryUtils utils = new RepositoryUtils();
-        String sql = "INSERT INTO TeacherAppointments( 'teacherId', 'disciplineId', 'groupId') "+
-        "VALUES( ?, ?, ?);";
+        String sql = "INSERT INTO TeacherAppointments( 'teacherId', 'disciplineId', 'groupId') " +
+                "VALUES( ?, ?, ?);";
         List<Object> parametersList = new ArrayList<>();
         parametersList.add(appointment.getTeacherId());
         parametersList.add(appointment.getDisciplineId());
@@ -40,7 +44,6 @@ public class SqlAppointmentsRepository implements TeacherAppointmentsRepository 
         return true;
     }
 
-
     @Override
     public TeacherAppointment getTeacherAppointmentById(int teacherAppointmentId) {
         RepositoryUtils utils = new RepositoryUtils();
@@ -49,11 +52,11 @@ public class SqlAppointmentsRepository implements TeacherAppointmentsRepository 
         parametersList.add(teacherAppointmentId);
         try {
             ResultSet resultSet = utils.getFromTable(sql, parametersList);
-            if (resultSet.next()){
-                TeacherAppointment appointment = new TeacherAppointment((Integer)(resultSet.getInt("appointmentId")),
-                                                                        (Integer)(resultSet.getInt("teacherId")),
-                                                                        (Integer)(resultSet.getInt("disciplineId")),
-                                                                        (Integer)(resultSet.getInt("groupId")));
+            if (resultSet.next()) {
+                TeacherAppointment appointment = new TeacherAppointment((Integer) (resultSet.getInt("appointmentId")),
+                        (Integer) (resultSet.getInt("teacherId")),
+                        (Integer) (resultSet.getInt("disciplineId")),
+                        (Integer) (resultSet.getInt("groupId")));
                 resultSet.close();
                 return appointment;
             }
@@ -98,7 +101,7 @@ public class SqlAppointmentsRepository implements TeacherAppointmentsRepository 
     public boolean updateTeacherAppointment(TeacherAppointment appointment) {
         RepositoryUtils utils = new RepositoryUtils();
         String sql = "UPDATE TeacherAppointments SET teacherId=?, disciplineId=?, groupId=? WHERE appointmentId=?";
-        if(getTeacherAppointmentById(appointment.getAppointmentId()) != null){
+        if (getTeacherAppointmentById(appointment.getAppointmentId()) != null) {
             List<Object> parametersList = new ArrayList<>();
             parametersList.add(appointment.getTeacherId());
             parametersList.add(appointment.getDisciplineId());
@@ -114,7 +117,7 @@ public class SqlAppointmentsRepository implements TeacherAppointmentsRepository 
     public boolean removeTeacherAppointment(int appointmentId) {
         RepositoryUtils utils = new RepositoryUtils();
         String sql = "DELETE FROM TeacherAppointments WHERE appointmentId=?";
-        if(getTeacherAppointmentById(appointmentId) != null){
+        if (getTeacherAppointmentById(appointmentId) != null) {
             List<Object> parametersList = new ArrayList<>();
             parametersList.add(appointmentId);
             utils.setTable(sql, parametersList);
@@ -123,17 +126,16 @@ public class SqlAppointmentsRepository implements TeacherAppointmentsRepository 
         return false;
     }
 
-    
-    private List<TeacherAppointment> getTeacherAppointmentsDataList(String sql, List<Object> parametersList){
+    private List<TeacherAppointment> getTeacherAppointmentsDataList(String sql, List<Object> parametersList) {
         RepositoryUtils utils = new RepositoryUtils();
         try {
             ResultSet resultSet = utils.getFromTable(sql, parametersList);
             List<TeacherAppointment> appointments = new ArrayList<>();
             while (resultSet.next()) {
-                appointments.add(new TeacherAppointment((Integer)(resultSet.getInt("appointmentId")),
-                                                        (Integer)(resultSet.getInt("teacherId")),
-                                                        (Integer)(resultSet.getInt("disciplineId")),
-                                                        (Integer)(resultSet.getInt("groupId"))));
+                appointments.add(new TeacherAppointment((Integer) (resultSet.getInt("appointmentId")),
+                        (Integer) (resultSet.getInt("teacherId")),
+                        (Integer) (resultSet.getInt("disciplineId")),
+                        (Integer) (resultSet.getInt("groupId"))));
             }
             resultSet.close();
             return appointments;
@@ -143,16 +145,16 @@ public class SqlAppointmentsRepository implements TeacherAppointmentsRepository 
         }
     }
 
-    private List<TeacherAppointment> getTeacherAppointmentsDataList(String sql){
+    private List<TeacherAppointment> getTeacherAppointmentsDataList(String sql) {
         RepositoryUtils utils = new RepositoryUtils();
         try {
             ResultSet resultSet = utils.getFromTable(sql);
             List<TeacherAppointment> appointments = new ArrayList<>();
-            while(resultSet.next()){
-                appointments.add(new TeacherAppointment((Integer)(resultSet.getInt("appointmentId")),
-                                        (Integer)(resultSet.getInt("teacherId")),
-                                        (Integer)(resultSet.getInt("disciplineId")),
-                                        (Integer)(resultSet.getInt("groupId"))));
+            while (resultSet.next()) {
+                appointments.add(new TeacherAppointment((Integer) (resultSet.getInt("appointmentId")),
+                        (Integer) (resultSet.getInt("teacherId")),
+                        (Integer) (resultSet.getInt("disciplineId")),
+                        (Integer) (resultSet.getInt("groupId"))));
             }
             resultSet.close();
             return appointments;

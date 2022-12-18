@@ -85,17 +85,17 @@ public class SqlDisciplinesRepository implements DisciplinesRepository {
     }
 
     @Override
-    public Discipline removeDiscipline(int disciplineId) {
+    public boolean removeDiscipline(int disciplineId) {
         RepositoryUtils utils = new RepositoryUtils();
         String sql = "DELETE FROM Disciplines WHERE disciplineId=?";
-        Discipline discipline = getDisciplineById(disciplineId);
+        //Discipline discipline = getDisciplineById(disciplineId);
         if(getDisciplineById(disciplineId) != null){
             List<Object> parametersList = new ArrayList<>();
             parametersList.add(disciplineId);
             utils.setTable(sql, parametersList);
-            return discipline;
+            return true; //discipline;
         }
-        return discipline;
+        return false; //discipline;
     }
 
 

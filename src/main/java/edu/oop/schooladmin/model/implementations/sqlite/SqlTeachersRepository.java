@@ -11,13 +11,13 @@ import edu.oop.schooladmin.model.entities.Teacher;
 import edu.oop.schooladmin.model.entities.TeacherAppointment;
 import edu.oop.schooladmin.model.interfaces.TeachersRepository;
 
-public class SqlTeachersRepository implements TeachersRepository{
+public class SqlTeachersRepository implements TeachersRepository {
 
     @Override
     public Teacher addTeacher(Teacher teacher) {
         RepositoryUtils utils = new RepositoryUtils();
-        String sql = "INSERT INTO Teachers( 'firstName', 'lastName', 'birthDate', 'grade') "+
-        "VALUES( ?, ?, ?, ?);";
+        String sql = "INSERT INTO Teachers( 'firstName', 'lastName', 'birthDate', 'grade') " +
+                "VALUES( ?, ?, ?, ?);";
         List<Object> parametersList = new ArrayList<>();
         parametersList.add(teacher.getFirstName());
         parametersList.add(teacher.getLastName());
@@ -36,12 +36,12 @@ public class SqlTeachersRepository implements TeachersRepository{
         parametersList.add(teacherId);
         try {
             ResultSet resultSet = utils.getFromTable(sql, parametersList);
-            if (resultSet.next()){
-                Teacher teacher = new Teacher((Integer)(resultSet.getInt("teacherId")),
-                    resultSet.getString("firstName"),
-                    resultSet.getString("lastName"),
-                    LocalDate.parse(resultSet.getString("birthDate")) ,
-                    (Integer)(resultSet.getInt("grade")));
+            if (resultSet.next()) {
+                Teacher teacher = new Teacher((Integer) (resultSet.getInt("teacherId")),
+                        resultSet.getString("firstName"),
+                        resultSet.getString("lastName"),
+                        LocalDate.parse(resultSet.getString("birthDate")),
+                        (Integer) (resultSet.getInt("grade")));
                 resultSet.close();
                 return teacher;
             }
@@ -59,20 +59,28 @@ public class SqlTeachersRepository implements TeachersRepository{
     }
 
     @Override
-    public List<Teacher> getTeachersByFirstName(String firstName) {
-        String sql = "SELECT teacherId, firstName, lastName, birthDate, grade FROM Teachers WHERE firstName=?";
-        List<Object> parametersList = new ArrayList<>();
-        parametersList.add(firstName);
-        return getTeachersDataList(sql, parametersList);
+    public List<Teacher> getTeachersByDisciplineId(int disciplineId) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
-    @Override
-    public List<Teacher> getTeachersByLastName(String lastName) {
-        String sql = "SELECT teacherId, firstName, lastName, birthDate, grade FROM Teachers WHERE LastName=?";
-        List<Object> parametersList = new ArrayList<>();
-        parametersList.add(lastName);
-        return getTeachersDataList(sql, parametersList);
-    }
+    // @Override
+    // public List<Teacher> getTeachersByFirstName(String firstName) {
+    // String sql = "SELECT teacherId, firstName, lastName, birthDate, grade FROM
+    // Teachers WHERE firstName=?";
+    // List<Object> parametersList = new ArrayList<>();
+    // parametersList.add(firstName);
+    // return getTeachersDataList(sql, parametersList);
+    // }
+
+    // @Override
+    // public List<Teacher> getTeachersByLastName(String lastName) {
+    // String sql = "SELECT teacherId, firstName, lastName, birthDate, grade FROM
+    // Teachers WHERE LastName=?";
+    // List<Object> parametersList = new ArrayList<>();
+    // parametersList.add(lastName);
+    // return getTeachersDataList(sql, parametersList);
+    // }
 
     @Override
     public List<Teacher> getTeachersByName(String namePattern) {
@@ -99,7 +107,6 @@ public class SqlTeachersRepository implements TeachersRepository{
         return null;
     }
 
-
     public List<Teacher> getTeachersByGrade(int grade) {
         String sql = "SELECT teacherId, firstName, lastName, birthDate, grade FROM Teachers WHERE grade=?";
         List<Object> parametersList = new ArrayList<>();
@@ -111,7 +118,7 @@ public class SqlTeachersRepository implements TeachersRepository{
     public boolean updateTeacher(Teacher teacher) {
         RepositoryUtils utils = new RepositoryUtils();
         String sql = "UPDATE Teachers SET firstName=?, lastName=?, birthDate=?, grade=? WHERE teacherId=?";
-        if(getTeacherById(teacher.getTeacherId()) != null){
+        if (getTeacherById(teacher.getTeacherId()) != null) {
             List<Object> parametersList = new ArrayList<>();
             parametersList.add(teacher.getFirstName());
             parametersList.add(teacher.getLastName());
@@ -130,19 +137,19 @@ public class SqlTeachersRepository implements TeachersRepository{
         String sql = "DELETE FROM Teachers WHERE teacherId=?";
         SqlGroupsRepository groupsRepository = new SqlGroupsRepository();
         SqlAppointmentsRepository appointmentsRepository = new SqlAppointmentsRepository();
-        if(getTeacherById(teacherId) != null){
+        if (getTeacherById(teacherId) != null) {
             List<Object> parametersList = new ArrayList<>();
             parametersList.add(teacherId);
             utils.setTable(sql, parametersList);
             List<Group> groups = groupsRepository.getGroupsByTeacherId(teacherId);
             List<TeacherAppointment> appointments = appointmentsRepository.getTeacherAppointmentsByTeacherId(teacherId);
-            if (!groups.isEmpty()){
+            if (!groups.isEmpty()) {
                 for (Group group : groups) {
                     group.setTeacherId(null);
                     groupsRepository.updateGroup(group);
                 }
             }
-            if (!appointments.isEmpty()){
+            if (!appointments.isEmpty()) {
                 for (TeacherAppointment appointment : appointments) {
                     appointmentsRepository.removeTeacherAppointment(appointment.getAppointmentId());
                 }
@@ -152,18 +159,17 @@ public class SqlTeachersRepository implements TeachersRepository{
         return false;
     }
 
-
-    private List<Teacher> getTeachersDataList(String sql, List<Object> parametersList){
+    private List<Teacher> getTeachersDataList(String sql, List<Object> parametersList) {
         RepositoryUtils utils = new RepositoryUtils();
         try {
             ResultSet resultSet = utils.getFromTable(sql, parametersList);
             List<Teacher> teachers = new ArrayList<>();
             while (resultSet.next()) {
-                teachers.add(new Teacher((Integer)(resultSet.getInt("teacherId")),
-                resultSet.getString("firstName"),
-                resultSet.getString("LastName"),
-                LocalDate.parse(resultSet.getString("birthDate")) ,
-                (Integer)(resultSet.getInt("grade")))) ;
+                teachers.add(new Teacher((Integer) (resultSet.getInt("teacherId")),
+                        resultSet.getString("firstName"),
+                        resultSet.getString("LastName"),
+                        LocalDate.parse(resultSet.getString("birthDate")),
+                        (Integer) (resultSet.getInt("grade"))));
             }
             resultSet.close();
             return teachers;
@@ -173,18 +179,17 @@ public class SqlTeachersRepository implements TeachersRepository{
         }
     }
 
-
-    private List<Teacher> getTeachersDataList(String sql){
+    private List<Teacher> getTeachersDataList(String sql) {
         RepositoryUtils utils = new RepositoryUtils();
         try {
             ResultSet resultSet = utils.getFromTable(sql);
             List<Teacher> teachers = new ArrayList<>();
-            while(resultSet.next()){
-                teachers.add(new Teacher((Integer)(resultSet.getInt("teacherId")),
-                resultSet.getString("firstName"),
-                resultSet.getString("LastName"),
-                LocalDate.parse(resultSet.getString("birthDate")) ,
-                (Integer)(resultSet.getInt("grade"))));
+            while (resultSet.next()) {
+                teachers.add(new Teacher((Integer) (resultSet.getInt("teacherId")),
+                        resultSet.getString("firstName"),
+                        resultSet.getString("LastName"),
+                        LocalDate.parse(resultSet.getString("birthDate")),
+                        (Integer) (resultSet.getInt("grade"))));
             }
             resultSet.close();
             return teachers;
@@ -193,5 +198,4 @@ public class SqlTeachersRepository implements TeachersRepository{
             return null;
         }
     }
-    
 }

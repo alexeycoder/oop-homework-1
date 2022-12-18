@@ -11,7 +11,7 @@ import edu.oop.schooladmin.model.interfaces.GroupsRepository;
 public class SqlGroupsRepository implements GroupsRepository {
 
     @Override
-    public boolean addGroup(Group group) {
+    public Group addGroup(Group group) {
         RepositoryUtils utils = new RepositoryUtils();
         String sql = "INSERT INTO Groups( 'classYear', 'classMark', 'teacherId') "+
         "VALUES( ?, ?, ?);";
@@ -21,7 +21,7 @@ public class SqlGroupsRepository implements GroupsRepository {
         parametersList.add(group.getTeacherId());
 
         utils.setTable(sql, parametersList);
-        return true;
+        return group;
     }
 
 
@@ -147,5 +147,4 @@ public class SqlGroupsRepository implements GroupsRepository {
             return null;
         }
     }
-    
 }

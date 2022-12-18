@@ -5,12 +5,9 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.time.LocalDate;
-
 
 import edu.oop.schooladmin.model.entities.Student;
 import edu.oop.schooladmin.model.interfaces.StudentsRepository;
-import edu.oop.schooladmin.model.implementations.sqlite.RepositoryUtils;
 
 public class SqlStudentsRepository implements StudentsRepository {
 
@@ -59,20 +56,26 @@ public class SqlStudentsRepository implements StudentsRepository {
         return getStudentsDataList(sql);
     }
 
-    @Override
-    public List<Student> getStudentsByFirstName(String firstName) {
-        String sql = "SELECT studentId, firstName, lastName, birthDate, groupId FROM Students WHERE firstName=?";
-        List<Object> parametersList = new ArrayList<>();
-        parametersList.add(firstName);
-        return getStudentsDataList(sql, parametersList);
-    }
+    // @Override
+    // public List<Student> getStudentsByFirstName(String firstName) {
+    //     String sql = "SELECT studentId, firstName, lastName, birthDate, groupId FROM Students WHERE firstName=?";
+    //     List<Object> parametersList = new ArrayList<>();
+    //     parametersList.add(firstName);
+    //     return getStudentsDataList(sql, parametersList);
+    // }
+
+    // @Override
+    // public List<Student> getStudentsByLastName(String lastName) {
+    //     String sql = "SELECT studentId, firstName, lastName, birthDate, groupId FROM Students WHERE LastName=?";
+    //     List<Object> parametersList = new ArrayList<>();
+    //     parametersList.add(lastName);
+    //     return getStudentsDataList(sql, parametersList);
+    // }
 
     @Override
-    public List<Student> getStudentsByLastName(String lastName) {
-        String sql = "SELECT studentId, firstName, lastName, birthDate, groupId FROM Students WHERE LastName=?";
-        List<Object> parametersList = new ArrayList<>();
-        parametersList.add(lastName);
-        return getStudentsDataList(sql, parametersList);
+    public List<Student> getStudentByName(String nameSample) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     @Override
@@ -166,5 +169,4 @@ public class SqlStudentsRepository implements StudentsRepository {
             return null;
         }
     }
-    
 }

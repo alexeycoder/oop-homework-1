@@ -2,7 +2,6 @@ package edu.oop.schooladmin.model.implementations.sqlite;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +14,8 @@ public class SqlRatingsRepository implements RatingsRepository {
     @Override
     public Rating addRating(Rating rating) {
         RepositoryUtils utils = new RepositoryUtils();
-        String sql = "INSERT INTO Ratings( 'studentId', 'disciplineId', 'dateTime', 'value', 'commentary') "+
-        "VALUES( ?, ?, ?, ?, ?);";
+        String sql = "INSERT INTO Ratings( 'studentId', 'disciplineId', 'dateTime', 'value', 'commentary') " +
+                "VALUES( ?, ?, ?, ?, ?);";
         List<Object> parametersList = new ArrayList<>();
         parametersList.add(rating.getStudentId());
         parametersList.add(rating.getDisciplineId());
@@ -28,7 +27,8 @@ public class SqlRatingsRepository implements RatingsRepository {
         return rating;
     }
 
-    // "CREATE TABLE Ratings(ratingId INTEGER PRIMARY KEY, studentId int NOT NULL, disciplineId int NOT NULL, dateTime text, " + 
+    // "CREATE TABLE Ratings(ratingId INTEGER PRIMARY KEY, studentId int NOT NULL,
+    // disciplineId int NOT NULL, dateTime text, " +
     // "value int NOT NULL, commentary text);";
     @Override
     public Rating getRatingById(int ratingId) {
@@ -38,13 +38,13 @@ public class SqlRatingsRepository implements RatingsRepository {
         parametersList.add(ratingId);
         try {
             ResultSet resultSet = utils.getFromTable(sql, parametersList);
-            if (resultSet.next()){
-                Rating rating = new Rating((Integer)(resultSet.getInt("ratingId")),
-                                            (Integer)resultSet.getInt("studentId"),
-                                            (Integer)resultSet.getInt("disciplineId"),
-                                            LocalDateTime.parse(resultSet.getString("dateTime")),
-                                            (resultSet.getInt("value")),
-                                            (resultSet.getString("commentary")));
+            if (resultSet.next()) {
+                Rating rating = new Rating((Integer) (resultSet.getInt("ratingId")),
+                        (Integer) resultSet.getInt("studentId"),
+                        (Integer) resultSet.getInt("disciplineId"),
+                        LocalDateTime.parse(resultSet.getString("dateTime")),
+                        (resultSet.getInt("value")),
+                        (resultSet.getString("commentary")));
                 resultSet.close();
                 return rating;
             }
@@ -85,10 +85,13 @@ public class SqlRatingsRepository implements RatingsRepository {
     }
 
     @Override
-    public List<Rating> getRatingsByValue(int value) {
-        String sql = "SELECT ratingId, studentId, disciplineId, dateTime, value, commentary FROM Ratings WHERE value=?";
+    public List<Rating> getRatingsByValue(int from, int to) {
+        // Изменил с getRatingsByValue(int value) на getRatingsByValue(int from, int to)
+        // надо проверить соответсвие запроса:
+        String sql = "SELECT ratingId, studentId, disciplineId, dateTime, value, commentary FROM Ratings WHERE value>=? AND value<=?";
         List<Object> parametersList = new ArrayList<>();
-        parametersList.add(value);
+        parametersList.add(from);
+        parametersList.add(to);
         return getRatingsDataList(sql, parametersList);
     }
 
@@ -96,7 +99,7 @@ public class SqlRatingsRepository implements RatingsRepository {
     public boolean updateRating(Rating rating) {
         RepositoryUtils utils = new RepositoryUtils();
         String sql = "UPDATE Ratings SET studentId=?, disciplineId=?, dateTime=?, value=?, commentary=? WHERE ratingId=?";
-        if(getRatingById(rating.getRatingId()) != null){
+        if (getRatingById(rating.getRatingId()) != null) {
             List<Object> parametersList = new ArrayList<>();
             parametersList.add(rating.getStudentId());
             parametersList.add(rating.getDisciplineId());
@@ -114,7 +117,7 @@ public class SqlRatingsRepository implements RatingsRepository {
     public boolean removeRating(int ratingId) {
         RepositoryUtils utils = new RepositoryUtils();
         String sql = "DELETE FROM Ratings WHERE ratingId=?";
-        if(getRatingById(ratingId) != null){
+        if (getRatingById(ratingId) != null) {
             List<Object> parametersList = new ArrayList<>();
             parametersList.add(ratingId);
             utils.setTable(sql, parametersList);
@@ -123,19 +126,18 @@ public class SqlRatingsRepository implements RatingsRepository {
         return false;
     }
 
-
-    private List<Rating> getRatingsDataList(String sql, List<Object> parametersList){
+    private List<Rating> getRatingsDataList(String sql, List<Object> parametersList) {
         RepositoryUtils utils = new RepositoryUtils();
         try {
             ResultSet resultSet = utils.getFromTable(sql, parametersList);
             List<Rating> ratings = new ArrayList<>();
             while (resultSet.next()) {
-                ratings.add(new Rating((Integer)(resultSet.getInt("ratingId")),
-                                        (Integer)resultSet.getInt("studentId"),
-                                        (Integer)resultSet.getInt("disciplineId"),
-                                        LocalDateTime.parse(resultSet.getString("dateTime")),
-                                        (resultSet.getInt("value")),
-                                        (resultSet.getString("commentary"))));
+                ratings.add(new Rating((Integer) (resultSet.getInt("ratingId")),
+                        (Integer) resultSet.getInt("studentId"),
+                        (Integer) resultSet.getInt("disciplineId"),
+                        LocalDateTime.parse(resultSet.getString("dateTime")),
+                        (resultSet.getInt("value")),
+                        (resultSet.getString("commentary"))));
             }
             resultSet.close();
             return ratings;
@@ -145,18 +147,18 @@ public class SqlRatingsRepository implements RatingsRepository {
         }
     }
 
-    private List<Rating> getRatingsDataList(String sql){
+    private List<Rating> getRatingsDataList(String sql) {
         RepositoryUtils utils = new RepositoryUtils();
         try {
             ResultSet resultSet = utils.getFromTable(sql);
             List<Rating> ratings = new ArrayList<>();
-            while(resultSet.next()){
-                ratings.add(new Rating((Integer)(resultSet.getInt("ratingId")),
-                                        (Integer)resultSet.getInt("studentId"),
-                                        (Integer)resultSet.getInt("disciplineId"),
-                                        LocalDateTime.parse(resultSet.getString("dateTime")),
-                                        (resultSet.getInt("value")),
-                                        (resultSet.getString("commentary"))));
+            while (resultSet.next()) {
+                ratings.add(new Rating((Integer) (resultSet.getInt("ratingId")),
+                        (Integer) resultSet.getInt("studentId"),
+                        (Integer) resultSet.getInt("disciplineId"),
+                        LocalDateTime.parse(resultSet.getString("dateTime")),
+                        (resultSet.getInt("value")),
+                        (resultSet.getString("commentary"))));
             }
             resultSet.close();
             return ratings;
@@ -165,5 +167,5 @@ public class SqlRatingsRepository implements RatingsRepository {
             return null;
         }
     }
-    
+
 }
