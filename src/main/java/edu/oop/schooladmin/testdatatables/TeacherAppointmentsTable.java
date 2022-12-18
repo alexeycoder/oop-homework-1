@@ -7,7 +7,7 @@ import edu.oop.schooladmin.model.entities.TeacherAppointment;
 
 public class TeacherAppointmentsTable {
 
-	public static ArrayList<TeacherAppointment> Appointments() {
+	public static ArrayList<TeacherAppointment> appointments() {
 		return Appointments;
 	}
 

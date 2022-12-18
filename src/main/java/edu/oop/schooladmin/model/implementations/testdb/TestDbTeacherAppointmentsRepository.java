@@ -21,7 +21,7 @@ public class TestDbTeacherAppointmentsRepository implements TeacherAppointmentsR
     }
 
     public TestDbTeacherAppointmentsRepository() {
-        appointments = TeacherAppointmentsTable.Appointments();
+        appointments = TeacherAppointmentsTable.appointments();
         lastId = RepositoryUtils.getLastPrimaryKey(appointments, a -> a.getAppointmentId());
     }
 
