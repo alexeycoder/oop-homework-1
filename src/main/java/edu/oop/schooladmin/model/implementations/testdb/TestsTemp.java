@@ -9,7 +9,7 @@ import edu.oop.schooladmin.model.entities.Group;
 import edu.oop.schooladmin.model.entities.Rating;
 import edu.oop.schooladmin.model.entities.Student;
 
-public class test {
+public class TestsTemp {
     public static void main(String[] args) {
         TestDbStudentsRepository testStudent = new TestDbStudentsRepository();
         TestDbTeachersRepository testTeacher = new TestDbTeachersRepository();
@@ -19,7 +19,7 @@ public class test {
         TestDbRatingsRepository testRating = new TestDbRatingsRepository();
 
         System.out.println("----MaxId--------");
-        System.out.println(testStudent.getLastId());
+        // System.out.println(testStudent.getLastId());
         System.out.println("------Стартовый список студентов------");
         System.out.println(testStudent.getAllStudents().toString());
         Student student1 = new Student(null, "Дмитрий", "Ковальчук",
@@ -29,13 +29,13 @@ public class test {
         System.out.println(testStudent.addStudent(student1));
         System.out.println(testStudent.addStudent(student2));
         System.out.println("------MaxId новое значение------");
-        System.out.println(testStudent.getLastId());
+        // System.out.println(testStudent.getLastId());
         System.out.println("------Новый список студентов------");
         System.out.println(testStudent.getAllStudents().toString());
         System.out.println("------Поиск по ID 2 студента------");
         System.out.println(testStudent.getStudentById(2));
         System.out.println("------Поиск по фамилии студента------");
-        System.out.println(testStudent.getStudentsByLastName("Ковальчук"));
+        // System.out.println(testStudent.getStudentsByLastName("Ковальчук"));
         System.out.println("------Поиск студетнов по ID группы 91------");
         System.out.println(testStudent.getStudentsByGroupId(91));
         System.out.println("------Удаление студентов по ID 8------");
@@ -49,7 +49,7 @@ public class test {
 
         
         System.out.println("----MaxId--------");
-        System.out.println(testTeacher.getLastId());
+        // System.out.println(testTeacher.getTeachersLastId());
         System.out.println("------Стартовый список учителей------");
         System.out.println(testTeacher.getAllTeachers().toString());
         Teacher teacher1 = new Teacher(null, "Дмитрий", "Ковальчук", LocalDate.of(1996, 10, 14), 1);
@@ -57,13 +57,13 @@ public class test {
         System.out.println(testTeacher.addTeacher(teacher1));
         System.out.println(testTeacher.addTeacher(teacher2));
         System.out.println("------MaxId новое значение------");
-        System.out.println(testTeacher.getLastId());
+        // System.out.println(testTeacher.getTeachersLastId());
         System.out.println("------Новый список учителей------");
         System.out.println(testTeacher.getAllTeachers().toString());
         System.out.println("------Поиск учителя по ID 2------");
         System.out.println(testTeacher.getTeacherById(2));
         System.out.println("------Поиск учителей по фамилии------");
-        System.out.println(testTeacher.getTeachersByLastName("Ковальчук"));
+        // System.out.println(testTeacher.getTeachersByLastName("Ковальчук"));
         System.out.println("------Поиск учителей по grade------");
         System.out.println(testTeacher.getTeachersByGrade(9, 10));
 
@@ -92,7 +92,7 @@ public class test {
 
         
         System.out.println("----MaxId групп--------");
-        System.out.println(testGroup.getLastId());
+        // System.out.println(testGroup.getLastId());
         System.out.println("------Стартовый список групп------");
         System.out.println(testGroup.getAllGroups().toString());
         System.out.println("------Добавление групп------");
@@ -101,7 +101,7 @@ public class test {
         System.out.println(testGroup.addGroup(group1));
         System.out.println(testGroup.addGroup(group2));
         System.out.println("------MaxId групп новое значение------");
-        System.out.println(testGroup.getLastId());
+        // System.out.println(testGroup.getLastId());
         System.out.println("------Список групп после добавления------");
         System.out.println(testGroup.getAllGroups().toString());
         System.out.println("------Поиск по ID 101------");
@@ -132,14 +132,14 @@ public class test {
 
 
         System.out.println("----MaxId назначений--------");
-        System.out.println(testAppointment.getLastId());
+        // System.out.println(testAppointment.getLastId());
         System.out.println("------Стартовый список назначений------");
         System.out.println(testAppointment.getAllTeacherAppointments().toString());
         System.out.println("------Добавление назначений------");
         System.out.println(testAppointment.addTeacherAppointment(teacher1, testDiscipline.getDisciplineById(2), group1));
         System.out.println(testAppointment.addTeacherAppointment(teacher1, testDiscipline.getDisciplineById(2), group2));
         System.out.println("------MaxId назначений новое значение------");
-        System.out.println(testAppointment.getLastId());
+        // System.out.println(testAppointment.getLastId());
         System.out.println("------Список назначений после добавления------");
         System.out.println(testAppointment.getAllTeacherAppointments().toString());
         System.out.println("------Поиск назначения по ID 21------");
@@ -157,14 +157,14 @@ public class test {
 
 
         System.out.println("----MaxId рейтинга--------");
-        System.out.println(testRating.getLastId());
+        // System.out.println(testRating.getLastId());
         System.out.println("------Добавление рейтинга------");
         Rating rating1 = new Rating(10, 2, LocalDateTime.of(2021,9,15, 0,0), 5,  "");
         Rating rating2 = new Rating(10, 2, LocalDateTime.of(2021,10,15, 0,0), 2,  "");
         System.out.println(testRating.addRating(rating1).toString());
         System.out.println(testRating.addRating(rating2).toString());
         System.out.println("------MaxId рейтинга новое значение------");
-        System.out.println(testRating.getLastId());
+        // System.out.println(testRating.getLastId());
         System.out.println("------Поиск рейтинга по ID 100------");
         System.out.println(testRating.getRatingById(100));
         System.out.println("------Поиск рейтинга по времени------");
@@ -174,16 +174,16 @@ public class test {
         System.out.println("------Поиск рейтинга по ID 10 студента------");
         System.out.println(testRating.getRatingsByStudentId(10));
         System.out.println("------Поиск рейтинга по оценке 2------");
-        System.out.println(testRating.getRatingsByValue(2));
+        // System.out.println(testRating.getRatingsByValue(2));
         System.out.println("------Изменение рейтинга------");
         rating1.setValue(2);
         System.out.println(testRating.updateRating(rating1));
         System.out.println("------Поиск рейтинга по оценке 2------");
-        System.out.println(testRating.getRatingsByValue(2));
+        // System.out.println(testRating.getRatingsByValue(2));
         System.out.println("------Удаление рейтинга по Id 201------");
         System.out.println(testRating.removeRating(201));
         System.out.println("------Поиск рейтинга по оценке 2------");
-        System.out.println(testRating.getRatingsByValue(2));
+        // System.out.println(testRating.getRatingsByValue(2));
 
     }
 }

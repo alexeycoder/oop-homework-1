@@ -40,11 +40,11 @@ public class TeacherAppointmentsController extends ControllerBase {
 	protected void switchToAction(int menuId, Object relatedEntity) {
 		switch (menuId) {
 			case 1 -> showAll();
-			case 2 -> showByTeacher(relatedEntity instanceof Teacher ? (Teacher) relatedEntity : null);
-			case 3 -> showByDiscipline(relatedEntity instanceof Discipline ? (Discipline) relatedEntity : null);
-			case 4 -> showByGroup(relatedEntity instanceof Group ? (Group) relatedEntity : null);
-			case 5 -> edit(relatedEntity instanceof TeacherAppointment ? (TeacherAppointment) relatedEntity : null);
-			case 6 -> delete(relatedEntity instanceof TeacherAppointment ? (TeacherAppointment) relatedEntity : null);
+			case 2 -> showByTeacher(relatedEntity instanceof Teacher teacher ? teacher : null);
+			case 3 -> showByDiscipline(relatedEntity instanceof Discipline discipline ? discipline : null);
+			case 4 -> showByGroup(relatedEntity instanceof Group group ? group : null);
+			case 5 -> edit(relatedEntity instanceof TeacherAppointment appointment ? appointment : null);
+			case 6 -> delete(relatedEntity instanceof TeacherAppointment appointment ? appointment : null);
 			default -> throw new NoSuchElementException();
 		}
 	}

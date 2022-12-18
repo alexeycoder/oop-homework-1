@@ -6,8 +6,6 @@ import edu.oop.schooladmin.model.entities.Discipline;
 
 public interface DisciplinesRepository {
 
-	// none linked repos
-
 	// create
 
 	Discipline addDiscipline(Discipline discipline);
@@ -26,5 +24,5 @@ public interface DisciplinesRepository {
 
 	// delete
 
-	Discipline removeDiscipline(int disciplineId);
+	boolean removeDiscipline(int disciplineId);
 }

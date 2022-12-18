@@ -11,7 +11,7 @@ public interface TeacherAppointmentsRepository {
 
 	// create
 
-	boolean addTeacherAppointment(Teacher teacher, Discipline discipline, Group group);
+	TeacherAppointment addTeacherAppointment(Teacher teacher, Discipline discipline, Group group);
 
 	// read
 

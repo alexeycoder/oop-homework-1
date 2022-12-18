@@ -1,139 +1,135 @@
 package edu.oop.schooladmin.model.implementations.testdb;
 
-import java.security.InvalidParameterException;
-import java.util.ArrayList;
 import java.util.List;
 
 import edu.oop.schooladmin.model.entities.Group;
+import edu.oop.schooladmin.model.entities.Student;
+import edu.oop.schooladmin.model.entities.Teacher;
 import edu.oop.schooladmin.model.interfaces.GroupsRepository;
 import edu.oop.schooladmin.testdatatables.GroupsTable;
+import edu.oop.schooladmin.testdatatables.Queryable;
+import edu.oop.schooladmin.testdatatables.StudentsTable;
+import edu.oop.schooladmin.testdatatables.TeachersTable;
 
-public class TestDbGroupsRepository implements GroupsRepository{
+public class TestDbGroupsRepository implements GroupsRepository {
 
-    private final ArrayList<Group> groups;
-	private int lastId;
-    
+    private final Queryable<Group> groups;
+    private final Queryable<Teacher> teachers;
+    private final Queryable<Student> students;
 
-    public int getLastId() {
-        return lastId;
+    public TestDbGroupsRepository() {
+        groups = GroupsTable.instance();
+        teachers = TeachersTable.instance();
+        students = StudentsTable.instance();
     }
 
-	public TestDbGroupsRepository() {
-		groups = GroupsTable.groups();
-		lastId = RepositoryUtils.getLastPrimaryKey(groups, g -> g.getGroupId());
-	}
-
-    @Override
-    public boolean addGroup(Group group) {
-        TestDbTeachersRepository teachersDb = new TestDbTeachersRepository();
-        makeSureValidity(group);
-
-        if (teachersDb.getTeacherById(group.getTeacherId()) != null){
-            group.setGroupId(++lastId);
-
-            var addedEntity = new Group(group);
-            groups.add(addedEntity);
-            return true;
+    /**
+     * Служет для удостоверения, что операция добавления/обновления указанной
+     * записи не нарушит *целостность БД*.
+     * 
+     * @param group Экземпляр добавляемой/обновляемой записи.
+     * @return Возвращает true, если операция допустима для переданных данных.
+     */
+    private boolean checkUpdateValidity(Group group) {
+        // Groups: допускается либо отсутствующая ссылка на Teacher, либо ссылка
+        // на существующего Teacher.
+        // Ссылка на несуществующего Teacher не допускается.
+        var teacherId = group.getTeacherId();
+        if (teacherId != null && teachers.get(teacherId) == null) {
+            return false;
         }
-        else return false;
+        return true;
     }
 
-	@Override
-	public List<Group> getAllGroups() {
-		return groups.stream().map(Group::new).toList();
-	}
+    /**
+     * Служет для удостоверения, что операция удаления указанной
+     * записи не нарушит *целостность БД*.
+     * 
+     * @param group Запись для удаления.
+     * @return Возвращает true, если удаление указанной записи не нарушит
+     *         целостность БД.
+     */
+    private boolean checkRemoveValidity(Group group) {
+        // Удаление записи Group разрешается всегда.
+        // Однако при удалении необходимо обеспечить об-null-ение соответствующей
+        // внешней ссылки на удаляемую группу у всех учеников.
+        return true;
+    }
 
-	@Override
-	public List<Group> getGroupsByTeacherId(int teacherId) {
-		return groups.stream().filter(d -> d.getTeacherId().equals(teacherId)).map(Group::new).toList();
-	}
+    private void resetGroupOnRelatedStudents(int groupId) {
+        students.queryAll()
+                .filter(s -> s.getGroupId() != null && s.getGroupId().equals(groupId))
+                .forEach(s -> students.update(resetGroupOnStudent(s)));
+    }
+
+    private static Student resetGroupOnStudent(Student student) {
+        student.setGroupId(null);
+        return student;
+    }
 
     @Override
-    public Group getGroupById(int groupId) {
-        var dbEntity = groups.stream().filter(s -> s.getGroupId().equals(groupId)).findFirst();
-        if (dbEntity.isPresent()) {
-            return new Group(dbEntity.get());
+    public Group addGroup(Group group) {
+        if (group == null) {
+            throw new NullPointerException("group");
+        }
+
+        if (checkUpdateValidity(group)) {
+            return groups.add(group);
         }
         return null;
     }
 
     @Override
+    public List<Group> getAllGroups() {
+        return groups.queryAll().toList();
+    }
+
+    @Override
+    public List<Group> getGroupsByTeacherId(int teacherId) {
+        return groups.queryAll()
+                .filter(d -> d.getTeacherId() != null && d.getTeacherId().equals(teacherId)).toList();
+    }
+
+    @Override
+    public Group getGroupById(int groupId) {
+        return groups.get(groupId);
+    }
+
+    @Override
     public List<Group> getGroupsByClassYear(int classYear) {
-        List<Group> resultList = new ArrayList<>();
-        for (Group group : groups) {
-            if (group.getClassYear() == classYear) {
-                resultList.add(new Group(group));
-            }
-        }
-        return resultList;
+        return groups.queryAll().filter(g -> g.getClassYear() == classYear).toList();
     }
 
     @Override
     public List<Group> getGroupsByClassMark(char classMark) {
-        List<Group> resultList = new ArrayList<>();
-        for (Group group : groups) {
-            if (group.getClassMark() == classMark) {
-                resultList.add(new Group(group));
-            }
-        }
-        return resultList;
+        return groups.queryAll().filter(g -> g.getClassMark() == classMark).toList();
     }
 
     @Override
     public boolean updateGroup(Group group) {
-        Integer index = null;
-        for (int i = 0; i < groups.size(); i++) {
-            if (groups.get(i).getGroupId().equals(group.getGroupId())) {
-                index = i;
-                break;
-            }
+        if (group == null) {
+            throw new NullPointerException("group");
         }
-        if (index != null){
-            groups.set(index.intValue(), new Group(group));
-            return true;
+
+        if (checkUpdateValidity(group)) {
+            return groups.update(group);
         }
-        else return false;
+        return false;
     }
 
     @Override
     public boolean removeGroup(int groupId) {
-        TestDbStudentsRepository studentsDb = new TestDbStudentsRepository();
-        Group dbEntityToRemove = null;
-        Integer index = null;
-        for (int i = 0; i < groups.size(); i++) {
-            var dbEntity = groups.get(i);
-            if (dbEntity.getGroupId().equals(groupId)) {
-                dbEntityToRemove = dbEntity;
-                index = i;
-                break;
+        var dbEntryToRemove = groups.get(groupId);
+        if (dbEntryToRemove == null) {
+            return false;
+        }
+        if (checkRemoveValidity(dbEntryToRemove)) {
+            if (groups.delete(groupId) != null) {
+                // Обновляем связанные таблицы только если удаление фактически прошло
+                resetGroupOnRelatedStudents(groupId);
+                return true;
             }
         }
-        if (dbEntityToRemove != null &&
-            studentsDb.getStudentsByGroupId(groupId).isEmpty())
-        {
-            groups.remove(index.intValue());
-            return true;
-        } else
-            return false;
+        return false;
     }
-    
-    private void makeSureValidity(Group group) {
-        if (group == null) {
-            throw new InvalidParameterException("group");
-        }
-    }
-
-    /**
-     * Копирует значения свойств экземпляра источника в экземпляр назначения
-     * и возвращает экземпляр назначения.
-     */
-    private static Group copyProperties(Group instanceFrom, Group instanceTo) {
-        assert instanceFrom != null && instanceTo != null;
-        instanceTo.setGroupId(instanceFrom.getGroupId());
-        instanceTo.setClassMark(instanceFrom.getClassMark());
-        instanceTo.setClassYear(instanceFrom.getClassYear());
-        instanceTo.setTeacherId(instanceFrom.getTeacherId());
-        return instanceTo;
-    }
-
 }

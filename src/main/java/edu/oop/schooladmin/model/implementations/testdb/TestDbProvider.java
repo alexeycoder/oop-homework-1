@@ -1,10 +1,7 @@
 package edu.oop.schooladmin.model.implementations.testdb;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 
-import edu.oop.schooladmin.model.entities.Teacher;
-import edu.oop.schooladmin.model.interfaces.CrossResolver;
 import edu.oop.schooladmin.model.interfaces.DataProvider;
 import edu.oop.schooladmin.model.interfaces.DisciplinesRepository;
 import edu.oop.schooladmin.model.interfaces.GroupsRepository;
@@ -12,6 +9,7 @@ import edu.oop.schooladmin.model.interfaces.RatingsRepository;
 import edu.oop.schooladmin.model.interfaces.StudentsRepository;
 import edu.oop.schooladmin.model.interfaces.TeacherAppointmentsRepository;
 import edu.oop.schooladmin.model.interfaces.TeachersRepository;
+// import edu.oop.schooladmin.model.interfaces.TeachersService;
 import edu.oop.schooladmin.model.interfaces.UserRolesRepository;
 import edu.oop.schooladmin.model.interfaces.UsersRepository;
 
@@ -23,16 +21,20 @@ public class TestDbProvider implements DataProvider {
 	private final StudentsRepository studentsRepository;
 	private final TeacherAppointmentsRepository teacherAppointmentsRepository;
 	private final RatingsRepository ratingsRepository;
-	private final CrossResolver crossResolver;
+	// private final TeachersService teachersService;
 
 	public TestDbProvider() {
+		// repos
 		this.disciplinesRepository = new TestDbDisciplinesRepository();
 		this.teachersRepository = new TestDbTeachersRepository();
 		this.groupsRepository = new TestDbGroupsRepository();
 		this.studentsRepository = new TestDbStudentsRepository();
 		this.teacherAppointmentsRepository = new TestDbTeacherAppointmentsRepository();
 		this.ratingsRepository = new TestDbRatingsRepository();
-		this.crossResolver = new TestDbCrossResolver();
+		// // services
+		// this.teachersService = new TestDbTeachersService(
+		// this.teachersRepository, this.teacherAppointmentsRepository,
+		// this.groupsRepository);
 	}
 
 	@Override
@@ -77,20 +79,8 @@ public class TestDbProvider implements DataProvider {
 		throw new NoSuchElementException();
 	}
 
-	@Override
-	public CrossResolver crossResolver() {
-		return crossResolver;
-	}
-
-	public class TestDbCrossResolver implements CrossResolver {
-
-		@Override
-		public List<Teacher> getTeachersByDisciplineId(int disciplineId) {
-			var appointments = teacherAppointmentsRepository
-					.getTeacherAppointmentsByDisciplineId(disciplineId);
-			var teachers = appointments.stream().mapToInt(a -> a.getTeacherId()).distinct().boxed()
-					.map(i -> teachersRepository.getTeacherById(i)).toList();
-			return teachers;
-		}
-	}
+	// @Override
+	// public TeachersService teachersService() {
+	// return teachersService;
+	// }
 }

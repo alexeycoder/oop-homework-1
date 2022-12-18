@@ -2,87 +2,95 @@ package edu.oop.schooladmin.model.implementations.testdb;
 
 import java.security.InvalidParameterException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import edu.oop.schooladmin.model.entities.Group;
 import edu.oop.schooladmin.model.entities.Teacher;
 import edu.oop.schooladmin.model.entities.TeacherAppointment;
 import edu.oop.schooladmin.model.interfaces.TeachersRepository;
+import edu.oop.schooladmin.testdatatables.GroupsTable;
+import edu.oop.schooladmin.testdatatables.Queryable;
+import edu.oop.schooladmin.testdatatables.TeacherAppointmentsTable;
 import edu.oop.schooladmin.testdatatables.TeachersTable;
+import edu.oop.utils.StringUtils;
 
 public class TestDbTeachersRepository implements TeachersRepository {
-    private final ArrayList<Teacher> teachers;
-    private int lastId;
 
-    public int getLastId() {
-        return lastId;
-    }
+    private final Queryable<Teacher> teachers;
+    private final Queryable<TeacherAppointment> teacherAppointments;
+    private final Queryable<Group> groups;
 
     public TestDbTeachersRepository() {
-        teachers = TeachersTable.teachers();
-        lastId = RepositoryUtils.getLastPrimaryKey(teachers, t -> t.getTeacherId());
+        teachers = TeachersTable.instance();
+        teacherAppointments = TeacherAppointmentsTable.instance();
+        groups = GroupsTable.instance();
+    }
+
+    /**
+     * Служет для удостоверения, что операция добавления/обновления указанной
+     * записи не нарушит *целостность БД*.
+     * 
+     * @param teacher Экземпляр добавляемой/обновляемой записи.
+     * @return Возвращает true, если операция допустима для переданных данных.
+     */
+    private boolean checkUpdateValidity(Teacher teacher) {
+        // Teachers: не зависит от других таблиц - всегда можно обновлять:
+        return true;
+    }
+
+    /**
+     * Служет для удостоверения, что операция удаления указанной
+     * записи не нарушит *целостность БД*.
+     * 
+     * @param teacher Запись для удаления.
+     * @return Возвращает true, если удаление указанной записи не нарушит
+     *         целостность БД.
+     */
+    private boolean checkRemoveValidity(Teacher teacher) {
+        // Teachers: не зависит от других таблиц - всегда можно удалять.
+        // Однако при удалении необходимо:
+        // 1. Об-null-ить все ссылки на удаляемого в Groups
+        // 2. Удалить все связанные назначения
+        return true;
+    }
+
+    private void deleteRelatedAppointments(int teacherId) {
+        var appointmentsSelect = teacherAppointments.queryAll()
+                .filter(ta -> ta.getTeacherId() != null && ta.getTeacherId().equals(teacherId));
+        for (var appointment : appointmentsSelect.toList()) {
+            teacherAppointments.delete(appointment.getAppointmentId());
+        }
+    }
+
+    private void resetTeacherOnRelatedGroups(int teacherId) {
+        groups.queryAll()
+                .filter(g -> g.getTeacherId() != null && g.getTeacherId().equals(teacherId))
+                .forEach(g -> groups.update(resetTeacherOnGroup(g)));
+    }
+
+    private static Group resetTeacherOnGroup(Group group) {
+        group.setTeacherId(null);
+        return group;
     }
 
     @Override
     public Teacher addTeacher(Teacher teacher) {
-        makeSureValidity(teacher);
+        basicCheck(teacher);
 
-        teacher.setTeacherId(++lastId);
-
-        // В таблицу сохраняем клон переданного экземпляра, а не его самого,
-        // чтобы разорвать связь между переданным экземпляром и фактически
-        // добавляемой в таблицу сущностью, дабы не возникло ситуации, когда
-        // всякие возможные дальнейшие модификации переданного экземпляра
-        // в клиентском коде влияли на состояние сущности в нашей таблице:
-        var addedEntity = new Teacher(teacher);
-        teachers.add(addedEntity);
-
-        // Возвращаем не связный с таблицей экземпляр, но показывая что
-        // он уже содержит фактический id:
-        return teacher;
-    }
-
-    @Override
-    public List<Teacher> getAllTeachers() {
-        List<Teacher> resultList = new ArrayList<>();
-        for (Teacher teacher : teachers) {
-            resultList.add(new Teacher(teacher));
-        }
-        return resultList;
-    }
-
-    @Override
-    public Teacher getTeacherById(int teacherId) {
-        var dbEntity = teachers.stream().filter(s -> s.getTeacherId().equals(teacherId)).findFirst();
-        if (dbEntity.isPresent()) {
-            return new Teacher(dbEntity.get());
+        if (checkUpdateValidity(teacher)) {
+            return teachers.add(teacher);
         }
         return null;
     }
 
-    @Deprecated
     @Override
-    public List<Teacher> getTeachersByFirstName(String firstName) {
-        List<Teacher> resultList = new ArrayList<>();
-        for (Teacher teacher : teachers) {
-            if (teacher.getFirstName().equalsIgnoreCase(firstName)) {
-                resultList.add(new Teacher(teacher));
-            }
-        }
-        return resultList;
+    public List<Teacher> getAllTeachers() {
+        return teachers.queryAll().toList();
     }
 
-    @Deprecated
     @Override
-    public List<Teacher> getTeachersByLastName(String lastName) {
-        List<Teacher> resultList = new ArrayList<>();
-        for (Teacher teacher : teachers) {
-            if (teacher.getLastName().equalsIgnoreCase(lastName)) {
-                resultList.add(new Teacher(teacher));
-            }
-        }
-        return resultList;
+    public Teacher getTeacherById(int teacherId) {
+        return teachers.get(teacherId);
     }
 
     @Override
@@ -93,101 +101,90 @@ public class TestDbTeachersRepository implements TeachersRepository {
         if (nameSample.isBlank()) {
             return List.of();
         }
-        
-        String regex = RepositoryUtils.getRegexContainsAll(nameSample);
-        return teachers.stream().filter(t -> (t.getFirstName() + " " + t.getLastName()).matches(regex))
-                .map(Teacher::new).toList();
+
+        String regex = StringUtils.getRegexContainsAll(nameSample);
+        return teachers.queryAll()
+                .filter(t -> (t.getFirstName() + " " + t.getLastName()).matches(regex)).toList();
     }
 
     @Override
     public List<Teacher> getTeachersByBirthDate(LocalDate from, LocalDate to) {
-        return teachers.stream().filter(d -> d.getBirthDate().isAfter(from) && d.getBirthDate().isBefore(to))
-                .map(Teacher::new).toList();
+        return teachers.queryAll()
+                .filter(d -> d.getBirthDate().isAfter(from) && d.getBirthDate().isBefore(to)).toList();
     }
 
     @Override
     public List<Teacher> getTeachersByGrade(int from, int to) {
-        List<Teacher> resultList = new ArrayList<>();
-        for (Teacher teacher : teachers) {
-            int teacherGrade = teacher.getGrade();
-            if (teacherGrade >= from && teacherGrade <= to) {
-                resultList.add(new Teacher(teacher));
-            }
-        }
-        return resultList;
+        return teachers.queryAll().filter(t -> t.getGrade() >= from && t.getGrade() <= to).toList();
     }
 
     @Override
-    public boolean removeTeacher(int teacherId) {
-        TestDbTeacherAppointmentsRepository appointmentsDb = new TestDbTeacherAppointmentsRepository();
-        TestDbGroupsRepository groupsDb = new TestDbGroupsRepository();
-        Teacher dbEntityToRemove = null;
-        Integer index = null;
-        for (int i = 0; i < teachers.size(); i++) {
-            var dbEntity = teachers.get(i);
-            if (dbEntity.getTeacherId().equals(teacherId)) {
-                dbEntityToRemove = dbEntity;
-                index = i;
-                break;
-            }
-        }
-        if (dbEntityToRemove != null) {
-            teachers.remove(index.intValue());
-            for (TeacherAppointment appointment : appointmentsDb.getTeacherAppointmentsByTeacherId(teacherId)) {
-                appointmentsDb.removeTeacherAppointment(appointment.getAppointmentId());
-            }
-            for (Group group : groupsDb.getGroupsByTeacherId(teacherId)) {
-                groupsDb.updateGroup(new Group(group.getGroupId(), group.getClassYear(), group.getClassMark(), null));
-            }
-            return true;
-        } else
-            return false;
+    public List<Teacher> getTeachersByDisciplineId(int disciplineId) {
+        var appointmentsSelect = teacherAppointments.queryAll()
+                .filter(ta -> ta.getDisciplineId() != null
+                        && ta.getDisciplineId().equals(disciplineId)
+                        && ta.getTeacherId() != null);
+
+        var teachersSelect = appointmentsSelect.mapToInt(ta -> ta.getTeacherId())
+                .distinct().boxed().map(i -> teachers.get(i));
+
+        return teachersSelect.toList();
+
+        // var appointments = teacherAppointmentsRepository
+        // .getTeacherAppointmentsByDisciplineId(disciplineId);
+        // var teachers = appointments.stream().mapToInt(a ->
+        // a.getTeacherId()).distinct().boxed()
+        // .map(i -> teachersRepository.getTeacherById(i)).toList();
+        // return teachers;
     }
 
     @Override
     public boolean updateTeacher(Teacher teacher) {
+        basicCheck(teacher);
 
-        // TODO: потом на базе copyProperties сделать, чтобы копировать по-свойствам
-        // значения из переданного экземпляра teacher в соответствующий по id
-        // экземпляр в таблице
+        if (checkUpdateValidity(teacher)) {
+            return teachers.update(teacher);
+        }
+        return false;
+    }
 
-        Integer index = null;
-        for (int i = 0; i < teachers.size(); i++) {
-            if (teachers.get(i).getTeacherId().equals(teacher.getTeacherId())) {
-                index = i;
-                break;
+    @Override
+    public boolean removeTeacher(int teacherId) {
+        var dbEntryToRemove = teachers.get(teacherId);
+        if (dbEntryToRemove == null) {
+            return false;
+        }
+        if (checkRemoveValidity(dbEntryToRemove)) {
+            if (teachers.delete(teacherId) != null) {
+                // Обновляем связанные таблицы только если удаление фактически прошло
+                resetTeacherOnRelatedGroups(teacherId);
+                deleteRelatedAppointments(teacherId);
+                return true;
             }
         }
-        if (index != null) {
-            teachers.set(index.intValue(), teacher);
-            return true;
-        } else
-            return false;
+        return false;
     }
 
-    // aux methods:
+    // aux:
 
-    private void makeSureValidity(Teacher teacher) {
+    private void basicCheck(Teacher teacher) {
         if (teacher == null) {
-            throw new InvalidParameterException("teacher");
+            throw new NullPointerException("teacher");
         }
-        if (teacher.getFirstName() == null || teacher.getFirstName().isBlank()) {
+        if (teacher.getFirstName() == null) {
+            throw new NullPointerException("teacher.firstName");
+        }
+        if (teacher.getFirstName().isBlank()) {
             throw new InvalidParameterException("teacher.firstName");
         }
-        // TODO: Посмотреть если что ещё нужно чекать перед добавлением и т.д.
-    }
-
-    /**
-     * Копирует значения свойств экземпляра источника в экземпляр назначения
-     * и возвращает экземпляр назначения.
-     */
-    private static Teacher copyProperties(Teacher instanceFrom, Teacher instanceTo) {
-        assert instanceFrom != null && instanceTo != null;
-        instanceTo.setTeacherId(instanceFrom.getTeacherId());
-        instanceTo.setFirstName(instanceFrom.getFirstName());
-        instanceTo.setLastName(instanceFrom.getLastName());
-        instanceTo.setBirthDate(instanceFrom.getBirthDate());
-        instanceTo.setGrade(instanceFrom.getGrade());
-        return instanceTo;
+        if (teacher.getLastName() == null) {
+            throw new NullPointerException("teacher.lastName");
+        }
+        if (teacher.getLastName().isBlank()) {
+            throw new InvalidParameterException("teacher.lastName");
+        }
+        if (teacher.getBirthDate() == null) {
+            throw new NullPointerException("teacher.birthDate");
+        }
     }
 }

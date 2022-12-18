@@ -1,7 +1,5 @@
 package edu.oop.schooladmin.model.implementations.testdb;
 
-import java.security.InvalidParameterException;
-import java.util.ArrayList;
 import java.util.List;
 
 import edu.oop.schooladmin.model.entities.Discipline;
@@ -9,151 +7,112 @@ import edu.oop.schooladmin.model.entities.Group;
 import edu.oop.schooladmin.model.entities.Teacher;
 import edu.oop.schooladmin.model.entities.TeacherAppointment;
 import edu.oop.schooladmin.model.interfaces.TeacherAppointmentsRepository;
+import edu.oop.schooladmin.testdatatables.DisciplinesTable;
+import edu.oop.schooladmin.testdatatables.GroupsTable;
+import edu.oop.schooladmin.testdatatables.Queryable;
 import edu.oop.schooladmin.testdatatables.TeacherAppointmentsTable;
+import edu.oop.schooladmin.testdatatables.TeachersTable;
 
 public class TestDbTeacherAppointmentsRepository implements TeacherAppointmentsRepository {
 
-    private final ArrayList<TeacherAppointment> appointments;
-    private int lastId;
-
-    public int getLastId() {
-        return lastId;
-    }
+    private final Queryable<TeacherAppointment> teacherAppointments;
+    private final Queryable<Teacher> teachers;
+    private final Queryable<Discipline> disciplines;
+    private final Queryable<Group> groups;
 
     public TestDbTeacherAppointmentsRepository() {
-        appointments = TeacherAppointmentsTable.Appointments();
-        lastId = RepositoryUtils.getLastPrimaryKey(appointments, a -> a.getAppointmentId());
+        teacherAppointments = TeacherAppointmentsTable.instance();
+        teachers = TeachersTable.instance();
+        disciplines = DisciplinesTable.instance();
+        groups = GroupsTable.instance();
     }
 
-    @Override
-    public boolean addTeacherAppointment(Teacher teacher, Discipline discipline, Group group) {
-        TestDbTeachersRepository teachersDb = new TestDbTeachersRepository();
-        TestDbGroupsRepository groupsDb = new TestDbGroupsRepository();
-        TestDbDisciplinesRepository disciplinesDb = new TestDbDisciplinesRepository();
-        if (teachersDb.getTeacherById(teacher.getTeacherId()) != null &&
-                disciplinesDb.getDisciplineById(discipline.getDisciplineId()) != null &&
-                groupsDb.getGroupById(group.getGroupId()) != null) {
-            TeacherAppointment appointment = new TeacherAppointment(++lastId,
-                    teacher.getTeacherId(),
-                    discipline.getDisciplineId(),
-                    group.getGroupId());
-            appointments.add(appointment);
-            return true;
-        } else
+    /**
+     * Служет для удостоверения, что операция добавления/обновления указанной
+     * записи не нарушит *целостность БД*.
+     * 
+     * @param teacherAppointment Экземпляр добавляемой/обновляемой записи.
+     * @return Возвращает true, если операция допустима для переданных данных.
+     */
+    private boolean checkUpdateValidity(TeacherAppointment teacherAppointment) {
+        // TeachersAppointments - связующая реляция (т.е. таблица),
+        // поэтому добавлять в неё записи с отсутствующими ссылками на связуемые
+        // сущности в других таблицах (внешние ключи) просто не имеет смысла:
+        var disciplineId = teacherAppointment.getDisciplineId();
+        if (disciplineId == null || disciplines.get(disciplineId) == null) {
             return false;
-    }
-
-    @Override
-    public List<TeacherAppointment> getAllTeacherAppointments() {
-        List<TeacherAppointment> resultList = new ArrayList<>();
-        for (TeacherAppointment appointment : appointments) {
-            resultList.add(new TeacherAppointment(appointment));
         }
-        return resultList;
+        var groupId = teacherAppointment.getGroupId();
+        if (groupId == null || groups.get(groupId) == null) {
+            return false;
+        }
+        var teacherId = teacherAppointment.getTeacherId();
+        if (teacherId == null || teachers.get(teacherId) == null) {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean checkRemoveValidity(TeacherAppointment teacherAppointment) {
+        // Удаление записи TeacherAppointment - no problem:
+        return true;
     }
 
     @Override
-    public TeacherAppointment getTeacherAppointmentById(int teacherAppointmentId) {
-        var dbEntity = appointments.stream().filter(a -> a.getAppointmentId().equals(teacherAppointmentId)).findFirst();
-        if (dbEntity.isPresent()) {
-            return new TeacherAppointment(dbEntity.get());
+    public TeacherAppointment addTeacherAppointment(Teacher teacher, Discipline discipline, Group group) {
+        TeacherAppointment appointment = new TeacherAppointment(
+                null,
+                teacher.getTeacherId(),
+                discipline.getDisciplineId(),
+                group.getGroupId());
+        if (checkUpdateValidity(appointment)) {
+            return teacherAppointments.add(appointment);
         }
         return null;
     }
 
     @Override
+    public List<TeacherAppointment> getAllTeacherAppointments() {
+        return teacherAppointments.queryAll().toList();
+    }
+
+    @Override
+    public TeacherAppointment getTeacherAppointmentById(int teacherAppointmentId) {
+        return teacherAppointments.get(teacherAppointmentId);
+    }
+
+    @Override
     public List<TeacherAppointment> getTeacherAppointmentsByTeacherId(int teacherId) {
-        // return appointments.stream().filter(a -> a.getTeacherId().equals(teacherId))
-        // .map(TeacherAppointment::new).toList();
-        List<TeacherAppointment> resultList = new ArrayList<>();
-        for (TeacherAppointment appointment : appointments) {
-            if (appointment.getTeacherId().equals(teacherId)) {
-                resultList.add(new TeacherAppointment(appointment));
-            }
-        }
-        return resultList;
+        return teacherAppointments.queryAll().filter(ta -> ta.getTeacherId().equals(teacherId)).toList();
     }
 
     @Override
     public List<TeacherAppointment> getTeacherAppointmentsByDisciplineId(int disciplineId) {
-        List<TeacherAppointment> resultList = new ArrayList<>();
-        for (TeacherAppointment appointment : appointments) {
-            if (appointment.getDisciplineId().equals(disciplineId)) {
-                resultList.add(new TeacherAppointment(appointment));
-            }
-        }
-        return resultList;
+        return teacherAppointments.queryAll().filter(ta -> ta.getDisciplineId().equals(disciplineId)).toList();
     }
 
     @Override
     public List<TeacherAppointment> getTeacherAppointmentsByGroupId(int groupId) {
-        List<TeacherAppointment> resultList = new ArrayList<>();
-        for (TeacherAppointment appointment : appointments) {
-            if (appointment.getGroupId().equals(groupId)) {
-                resultList.add(new TeacherAppointment(appointment));
-            }
-        }
-        return resultList;
+        return teacherAppointments.queryAll().filter(ta -> ta.getGroupId().equals(groupId)).toList();
     }
 
     @Override
     public boolean updateTeacherAppointment(TeacherAppointment appointment) {
-        TestDbTeachersRepository teachersDb = new TestDbTeachersRepository();
-        TestDbGroupsRepository groupsDb = new TestDbGroupsRepository();
-        TestDbDisciplinesRepository disciplinesDb = new TestDbDisciplinesRepository();
-        Integer index = null;
-        for (int i = 0; i < appointments.size(); i++) {
-            if (appointments.get(i).getAppointmentId().equals(appointment.getAppointmentId())) {
-                index = i;
-                break;
-            }
+        if (checkUpdateValidity(appointment)) {
+            return teacherAppointments.update(appointment);
         }
-        if (teachersDb.getTeacherById(appointment.getTeacherId()) != null &&
-                disciplinesDb.getDisciplineById(appointment.getDisciplineId()) != null &&
-                groupsDb.getGroupById(appointment.getGroupId()) != null &&
-                index != null) {
-            appointments.set(index.intValue(), new TeacherAppointment(appointment));
-            return true;
-        } else
-            return false;
+        return false;
     }
 
     @Override
     public boolean removeTeacherAppointment(int teacherAppointmentId) {
-        TeacherAppointment dbEntityToRemove = null;
-        Integer index = null;
-        for (int i = 0; i < appointments.size(); i++) {
-            var dbEntity = appointments.get(i);
-            if (dbEntity.getAppointmentId().equals(teacherAppointmentId)) {
-                dbEntityToRemove = dbEntity;
-                index = i;
-                break;
-            }
-        }
-        if (dbEntityToRemove != null) {
-            appointments.remove(index.intValue());
-            return true;
-        } else
+        var dbEntryToRemove = teacherAppointments.get(teacherAppointmentId);
+        if (dbEntryToRemove == null) {
             return false;
-    }
-
-    private void makeSureValidity(Group group) {
-        if (group == null) {
-            throw new InvalidParameterException("group");
         }
+        if (checkRemoveValidity(dbEntryToRemove)) {
+            return teacherAppointments.delete(teacherAppointmentId) != null;
+        }
+        return false;
     }
-
-    /**
-     * Копирует значения свойств экземпляра источника в экземпляр назначения
-     * и возвращает экземпляр назначения.
-     */
-    private static Group copyProperties(Group instanceFrom, Group instanceTo) {
-        assert instanceFrom != null && instanceTo != null;
-        instanceTo.setGroupId(instanceFrom.getGroupId());
-        instanceTo.setClassMark(instanceFrom.getClassMark());
-        instanceTo.setClassYear(instanceFrom.getClassYear());
-        instanceTo.setTeacherId(instanceFrom.getTeacherId());
-        return instanceTo;
-    }
-
 }

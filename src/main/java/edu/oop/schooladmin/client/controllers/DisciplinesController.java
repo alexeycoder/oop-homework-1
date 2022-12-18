@@ -44,7 +44,7 @@ public class DisciplinesController extends ControllerBase {
 		ArrayList<DisciplineViewModel> resultList = new ArrayList<>();
 
 		var disciplinesRepository = dp.disciplinesRepository();
-		var crossResolver = dp.crossResolver();
+		var crossResolver = dp.teachersService();
 
 		for (var discipline : disciplinesRepository.getAllDisciplines()) {
 			var teachers = crossResolver.getTeachersByDisciplineId(discipline.getDisciplineId());

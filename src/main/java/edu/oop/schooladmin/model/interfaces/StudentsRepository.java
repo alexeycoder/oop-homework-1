@@ -17,12 +17,6 @@ public interface StudentsRepository {
 
     List<Student> getAllStudents();
 
-    @Deprecated
-    List<Student> getStudentsByFirstName(String firstName);
-
-    @Deprecated
-    List<Student> getStudentsByLastName(String lastName);
-
     /**
      * Поиск по имени и/или фамилии. Допускается частичное совпадение.
      * 

@@ -17,18 +17,12 @@ public interface TeachersRepository {
 
     List<Teacher> getAllTeachers();
 
-    @Deprecated
-    List<Teacher> getTeachersByFirstName(String firstName);
-
-    @Deprecated
-    List<Teacher> getTeachersByLastName(String lastName);
-
     /**
      * Поиск по имени и/или фамилии. Допускается частичное совпадение.
      * 
      * @param nameSample Имя, фамилия, или и то и другое через пробел.
-     *                    Имя и фамилию допускается предоставить не полностью -
-     *                    поиск осуществляется по частичному совпадению.
+     *                   Имя и фамилию допускается предоставить не полностью -
+     *                   поиск осуществляется по частичному совпадению.
      * @return Экземпляр, найденной сущности или null если запись не найдена.
      */
     List<Teacher> getTeachersByName(String nameSample);
@@ -36,6 +30,8 @@ public interface TeachersRepository {
     List<Teacher> getTeachersByBirthDate(LocalDate from, LocalDate to);
 
     List<Teacher> getTeachersByGrade(int from, int to);
+
+    List<Teacher> getTeachersByDisciplineId(int disciplineId);
 
     // update
 

@@ -12,7 +12,7 @@ public interface GroupsRepository {
 
 	// create
 
-	boolean addGroup(Group group);
+	Group addGroup(Group group);
 
 	// read
 
