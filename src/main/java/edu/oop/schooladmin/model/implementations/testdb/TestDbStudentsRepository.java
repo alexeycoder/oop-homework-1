@@ -7,7 +7,7 @@ import java.util.List;
 
 import edu.oop.schooladmin.model.entities.Student;
 import edu.oop.schooladmin.model.interfaces.StudentsRepository;
-import edu.oop.schooladmin.testdatatables.StudentsTable;
+import edu.oop.schooladmin.testdatatablesprevious.StudentsTable;
 
 public class TestDbStudentsRepository implements StudentsRepository {
 

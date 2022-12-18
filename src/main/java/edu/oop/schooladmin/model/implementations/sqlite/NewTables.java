@@ -9,12 +9,12 @@ import edu.oop.schooladmin.model.entities.Student;
 import edu.oop.schooladmin.model.entities.Teacher;
 import edu.oop.schooladmin.model.entities.TeacherAppointment;
 import edu.oop.schooladmin.model.interfaces.StudentsRepository;
-import edu.oop.schooladmin.testdatatables.DisciplinesTable;
-import edu.oop.schooladmin.testdatatables.GroupsTable;
-import edu.oop.schooladmin.testdatatables.RatingsTable;
-import edu.oop.schooladmin.testdatatables.StudentsTable;
-import edu.oop.schooladmin.testdatatables.TeacherAppointmentsTable;
-import edu.oop.schooladmin.testdatatables.TeachersTable;
+import edu.oop.schooladmin.testdatatablesprevious.DisciplinesTable;
+import edu.oop.schooladmin.testdatatablesprevious.GroupsTable;
+import edu.oop.schooladmin.testdatatablesprevious.RatingsTable;
+import edu.oop.schooladmin.testdatatablesprevious.StudentsTable;
+import edu.oop.schooladmin.testdatatablesprevious.TeacherAppointmentsTable;
+import edu.oop.schooladmin.testdatatablesprevious.TeachersTable;
 
 import java.sql.*;
 import java.util.*;

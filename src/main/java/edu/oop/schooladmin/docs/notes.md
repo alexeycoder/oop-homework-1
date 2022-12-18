@@ -28,3 +28,11 @@
 <hr>
 
 JPA (Java Persistence API, реализующий концепцию ORM) требует чтобы классы сущностей имели конструктор по-умолчанию (т.е. без аргументов). Делаем тоже.
+
+<hr>
+
+Для экспериментов с SQL Lite:
+
+[Builds](https://github.com/xerial/sqlite-jdbc/releases)
+
+[Sqlite-JDBC](https://github.com/xerial/sqlite-jdbc)

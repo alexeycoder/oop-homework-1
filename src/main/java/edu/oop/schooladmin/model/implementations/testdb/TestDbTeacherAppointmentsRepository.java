@@ -9,7 +9,7 @@ import edu.oop.schooladmin.model.entities.Group;
 import edu.oop.schooladmin.model.entities.Teacher;
 import edu.oop.schooladmin.model.entities.TeacherAppointment;
 import edu.oop.schooladmin.model.interfaces.TeacherAppointmentsRepository;
-import edu.oop.schooladmin.testdatatables.TeacherAppointmentsTable;
+import edu.oop.schooladmin.testdatatablesprevious.TeacherAppointmentsTable;
 
 public class TestDbTeacherAppointmentsRepository implements TeacherAppointmentsRepository {
 

@@ -6,7 +6,7 @@ import java.util.List;
 
 import edu.oop.schooladmin.model.entities.Rating;
 import edu.oop.schooladmin.model.interfaces.RatingsRepository;
-import edu.oop.schooladmin.testdatatables.RatingsTable;
+import edu.oop.schooladmin.testdatatablesprevious.RatingsTable;
 
 public class TestDbRatingsRepository implements RatingsRepository {
 

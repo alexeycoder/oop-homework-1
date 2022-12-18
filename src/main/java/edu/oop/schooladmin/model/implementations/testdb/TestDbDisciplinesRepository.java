@@ -6,7 +6,7 @@ import java.util.List;
 
 import edu.oop.schooladmin.model.entities.Discipline;
 import edu.oop.schooladmin.model.interfaces.DisciplinesRepository;
-import edu.oop.schooladmin.testdatatables.DisciplinesTable;
+import edu.oop.schooladmin.testdatatablesprevious.DisciplinesTable;
 
 public class TestDbDisciplinesRepository implements DisciplinesRepository {
 

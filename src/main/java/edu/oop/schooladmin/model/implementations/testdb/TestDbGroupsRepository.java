@@ -6,7 +6,7 @@ import java.util.List;
 
 import edu.oop.schooladmin.model.entities.Group;
 import edu.oop.schooladmin.model.interfaces.GroupsRepository;
-import edu.oop.schooladmin.testdatatables.GroupsTable;
+import edu.oop.schooladmin.testdatatablesprevious.GroupsTable;
 
 public class TestDbGroupsRepository implements GroupsRepository{
 
