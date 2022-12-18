@@ -25,7 +25,7 @@ public interface StudentsRepository {
      *                    поиск осуществляется по частичному совпадению.
      * @return Экземпляр, найденной сущности или null если запись не найдена.
      */
-    List<Student> getStudentByName(String nameSample);
+    List<Student> getStudentsByName(String nameSample);
 
     List<Student> getStudentsByGroupId(int groupId);
 

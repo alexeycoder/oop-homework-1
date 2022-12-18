@@ -58,27 +58,12 @@ public class TeachersController extends ControllerBase {
 		view.waitToProceed();
 	}
 
-	private Teacher askTeacher() {
-		Teacher teacher = null;
-		int id;
-		do {
-			OptionalInt answer = view.askInteger("\nВведите ID (или пустой Ввод для отмены): ", 0, null);
-			if (answer.isEmpty()) {
-				return null;
-			}
-			id = answer.getAsInt();
-			var teachersRepo = dp.teachersRepository();
-			teacher = teachersRepo.getTeacherById(id);
-		} while (teacher == null
-				&& view.askYesNo(String.format("Записи для ID %d не найдено.\nПовторить поиск? (Y/n)", id), true));
-		return teacher;
-	}
+	
 
 	private void showOneById(Teacher teacher) {
 		view.clear();
 		view.showText("ПОИСК УЧИТЕЛЯ ПО ID");
 		do {
-
 			if (teacher == null) {
 				teacher = askTeacher();
 				if (teacher == null) {
@@ -137,29 +122,33 @@ public class TeachersController extends ControllerBase {
 	private void addNew() {
 		view.clear();
 		view.showText("ДОБАВЛЕНИЕ УЧИТЕЛЯ");
-
+		boolean cancelled = false;
 		do {
 			var firstName = view.askString("\nВведите имя (пустой Ввод отменит добавление): ", null, null);
 			if (firstName.isEmpty()) {
-				return;
+				cancelled=true;
+				break;
 			}
 			var lastName = view.askString("\nВведите фамилию (пустой Ввод отменит добавление): ", null, null);
 			if (lastName.isEmpty()) {
-				return;
+				cancelled=true;
+				break;
 			}
 			var strDate = view.askString(
 					"\nВведите дату рождения в формате YYYY-MM-DD (пустой Ввод отменит добавление): ",
 					s -> s.matches("^\\d{4}-\\d{2}-\\d{2}$"),
 					"Некорректный ввод: не соответствует формату YYYY-MM-DD.");
 			if (strDate.isEmpty()) {
-				return;
+				cancelled=true;
+				break;
 			}
 			LocalDate birthDate = LocalDate.parse(strDate.get());
 
 			OptionalInt grade = view.askInteger(
 					"\nВведите категорию учителя (пустой Ввод отменит добавление): : ", 1, 20);
 			if (grade.isEmpty()) {
-				return;
+				cancelled=true;
+				break;
 			}
 
 			Teacher teacher = new Teacher(null, firstName.get(), lastName.get(), birthDate, grade.getAsInt());
@@ -176,8 +165,12 @@ public class TeachersController extends ControllerBase {
 					view.showText("Что-то пошло не так.");
 				}
 			}
-
 		} while (view.askYesNo("Добавить ещё? (Y/n)", true));
+
+		if(cancelled){
+			view.showText("Добавление отменено.");
+			view.waitToProceed();
+		}
 	}
 
 	private void edit(Teacher teacher) {

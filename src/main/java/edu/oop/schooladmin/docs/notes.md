@@ -31,7 +31,7 @@ JPA (Java Persistence API, реализующий концепцию ORM) тре
 
 <hr>
 
-Для экспериментов с SQL Lite:
+Для экспериментов с **SQL Lite**:
 
 [Builds](https://github.com/xerial/sqlite-jdbc/releases)
 

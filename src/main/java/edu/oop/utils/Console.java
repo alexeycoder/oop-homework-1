@@ -31,7 +31,7 @@ public class Console {
 				}
 			}
 
-			System.out.println(prompt);
+			System.out.print(prompt);
 			String inp = inputScanner.nextLine();
 			if (inp.isEmpty()) {
 				return null;

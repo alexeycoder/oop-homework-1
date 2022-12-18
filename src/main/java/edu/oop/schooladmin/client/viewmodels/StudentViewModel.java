@@ -28,4 +28,9 @@ public class StudentViewModel extends ViewModelBase {
 				classMark);
 	}
 
+	public static String studentSimplifiedRepr(Student student) {
+		return String.format("(ID %d) %-12s %-12s", student.getStudentId(), student.getFirstName(),
+				student.getLastName());
+	}
+
 }

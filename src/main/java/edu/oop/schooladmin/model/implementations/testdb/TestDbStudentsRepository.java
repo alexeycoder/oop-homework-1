@@ -91,7 +91,7 @@ public class TestDbStudentsRepository implements StudentsRepository {
     }
 
     @Override
-    public List<Student> getStudentByName(String nameSample) {
+    public List<Student> getStudentsByName(String nameSample) {
         if (nameSample == null) {
             return List.of();
         }

@@ -9,8 +9,8 @@ public class Student extends Person {
     public Student() {
     }
 
-    public Student(Integer studentId, String firstName, String secondName, LocalDate birthDate, Integer groupId) {
-        super(firstName, secondName, birthDate);
+    public Student(Integer studentId, String firstName, String lastName, LocalDate birthDate, Integer groupId) {
+        super(firstName, lastName, birthDate);
         this.studentId = studentId;
         this.groupId = groupId;
     }
@@ -48,5 +48,4 @@ public class Student extends Person {
     public String toString() {
         return studentId + ":" + super.toString() + ":" + groupId;
     }
-
 }
