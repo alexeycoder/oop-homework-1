@@ -1,124 +1,130 @@
 package edu.oop.schooladmin.model.implementations.testdb;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
+import edu.oop.schooladmin.model.entities.Discipline;
 import edu.oop.schooladmin.model.entities.Rating;
+import edu.oop.schooladmin.model.entities.Student;
 import edu.oop.schooladmin.model.interfaces.RatingsRepository;
-import edu.oop.schooladmin.testdatatablesprevious.RatingsTable;
+import edu.oop.schooladmin.testdatatables.DisciplinesTable;
+import edu.oop.schooladmin.testdatatables.Queryable;
+import edu.oop.schooladmin.testdatatables.RatingsTable;
+import edu.oop.schooladmin.testdatatables.StudentsTable;
+import edu.oop.utils.DateTimeUtils;
 
 public class TestDbRatingsRepository implements RatingsRepository {
 
-    private final ArrayList<Rating> ratings;
-    private int lastId;
-
-    public int getLastId() {
-        return lastId;
-    }
-
+    private final Queryable<Rating> ratings;
+    private final Queryable<Student> students;
+    private final Queryable<Discipline> disciplines;
 
     public TestDbRatingsRepository() {
-        ratings = RatingsTable.ratings();
-        lastId = RepositoryUtils.getLastPrimaryKey(ratings, r -> r.getRatingId());
+        ratings = RatingsTable.instance();
+        students = StudentsTable.instance();
+        disciplines = DisciplinesTable.instance();
+    }
+
+    /**
+     * Служет для удостоверения, что операция добавления/обновления указанной
+     * записи не нарушит *целостность БД*.
+     * 
+     * @param rating Экземпляр добавляемой/обновляемой записи.
+     * @return Возвращает true, если операция допустима для переданных данных.
+     */
+    private boolean checkUpdateValidity(Rating rating) {
+        // Ratings:
+        // Ссылка на несуществующего Student не допускается.
+        // Ссылка на несуществующий Discipline не допускается.
+        var studentId = rating.getStudentId();
+        if (studentId == null || students.get(studentId) == null) {
+            return false;
+        }
+        var disciplineId = rating.getDisciplineId();
+        if (disciplineId == null || disciplines.get(disciplineId) == null) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Служет для удостоверения, что операция удаления указанной
+     * записи не нарушит *целостность БД*.
+     * 
+     * @param rating Запись для удаления.
+     * @return Возвращает true, если удаление указанной записи не нарушит
+     *         целостность БД.
+     */
+    private boolean checkRemoveValidity(Rating rating) {
+        // Удаление записи Rating разрешается всегда.
+        return true;
     }
 
     @Override
     public Rating addRating(Rating rating) {
-        rating.setRatingId(++lastId);
-
-        var addedEntity = new Rating(rating);
-        ratings.add(addedEntity);
-
-        return rating;
-    }
-
-    @Override
-    public Rating getRatingById(int ratingId) {
-        var dbEntity = ratings.stream().filter(r -> r.getRatingId().equals(ratingId)).findFirst();
-        if (dbEntity.isPresent()) {
-            return new Rating(dbEntity.get());
+        if (rating == null) {
+            throw new NullPointerException("rating");
+        }
+        if (checkUpdateValidity(rating)) {
+            return ratings.add(rating);
         }
         return null;
     }
 
     @Override
+    public Rating getRatingById(int ratingId) {
+        return ratings.get(ratingId);
+    }
+
+    @Override
     public List<Rating> getRatingsByStudentId(int studentId) {
-        List<Rating> resultList = new ArrayList<>();
-        for (Rating rating : ratings) {
-            if (rating.getStudentId().equals(studentId)) {
-                resultList.add(new Rating(rating));
-            }
-        }
-        return resultList;
+        return ratings.queryAll()
+                .filter(r -> r.getStudentId() != null && r.getStudentId().equals(studentId))
+                .toList();
     }
 
     @Override
     public List<Rating> getRatingsByDisciplineId(int disciplineId) {
-        List<Rating> resultList = new ArrayList<>();
-        for (Rating rating : ratings) {
-            if (rating.getDisciplineId().equals(disciplineId)) {
-                resultList.add(new Rating(rating));
-            }
-        }
-        return resultList;
+        return ratings.queryAll()
+                .filter(r -> r.getDisciplineId() != null && r.getDisciplineId().equals(disciplineId))
+                .toList();
     }
 
     @Override
     public List<Rating> getRatingsByDateTime(LocalDateTime from, LocalDateTime to) {
-        List<Rating> resultList = new ArrayList<>();
-        for (Rating rating : ratings) {
-            if (rating.getDateTime().isAfter(from) && rating.getDateTime().isBefore(to)) {
-                resultList.add(new Rating(rating));
-            }
-        }
-        return resultList;
+        return ratings.queryAll()
+                .filter(r -> DateTimeUtils.isInRange(r.getDateTime(), from, to))
+                .toList();
     }
 
     @Override
-    public List<Rating> getRatingsByValue(int value) {
-        List<Rating> resultList = new ArrayList<>();
-        for (Rating rating : ratings) {
-            if (rating.getValue() == value) {
-                resultList.add(new Rating(rating));
-            }
-        }
-        return resultList;
+    public List<Rating> getRatingsByValue(int from, int to) {
+        return ratings.queryAll()
+                .filter(r -> r.getValue() >= from && r.getValue() <= to)
+                .toList();
     }
 
     @Override
     public boolean updateRating(Rating rating) {
-        Integer index = null;
-        for (int i = 0; i < ratings.size(); i++) {
-            if (ratings.get(i).getRatingId().equals(rating.getRatingId())) {
-                index = i;
-                break;
-            }
+        if (rating == null) {
+            throw new NullPointerException("rating");
         }
-        if (index != null) {
-            ratings.set(index.intValue(), new Rating(rating));
-            return true;
-        } else
-            return false;
+        if (checkUpdateValidity(rating)) {
+            return ratings.update(rating);
+        }
+        return false;
     }
 
     @Override
     public boolean removeRating(int ratingId) {
-        Rating dbEntityToRemove = null;
-        Integer index = null;
-        for (int i = 0; i < ratings.size(); i++) {
-            var dbEntity = ratings.get(i);
-            if (dbEntity.getRatingId().equals(ratingId)) {
-                dbEntityToRemove = dbEntity;
-                index = i;
-                break;
-            }
-        }
-        if (dbEntityToRemove != null) {
-            ratings.remove(index.intValue());
-            return true;
-        } else
+        Rating dbEntryToRemove = ratings.get(ratingId);
+        if (dbEntryToRemove == null) {
             return false;
+        }
+        if (checkRemoveValidity(dbEntryToRemove)) {
+            return ratings.delete(ratingId) != null;
+        }
+        return false;
     }
-    
+
 }

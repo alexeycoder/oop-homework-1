@@ -18,5 +18,5 @@ public interface DataProvider {
 
 	UserRolesRepository userRolesRepository();
 
-	CrossResolver crossResolver();
+	// TeachersService teachersService();
 }

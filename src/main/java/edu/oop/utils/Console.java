@@ -191,10 +191,13 @@ public class Console {
 			forceExit();
 		}
 
-		if (isYesDefault) {
-			return answer.startsWith("y") || answer.startsWith("д");
+		if (answer.startsWith("y") || answer.startsWith("д")) {
+			return true;
+		} else if (answer.startsWith("n") || answer.startsWith("н")) {
+			return false;
+		} else {
+			return isYesDefault;
 		}
-		return answer.startsWith("n") || answer.startsWith("н");
 	}
 
 	public static void forceExit() {

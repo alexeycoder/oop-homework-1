@@ -1,4 +1,5 @@
 package edu.oop.schooladmin.client.controllers;
+
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -23,14 +24,12 @@ public class RatingsController extends ControllerBase {
 
 	@Override
 	protected Map<Object, String> getMenuModel() {
-		// TODO Auto-generated method stub
-		return null;
+		return Commons.RATINGS_MENU;
 	}
 
 	@Override
-	protected void switchToAction(int menuId, Integer entityId) {
-		// TODO Auto-generated method stub
-		
+	protected void switchToAction(int menuId, Object relatedEntity) {
+		dummyAction();
 	}
-	
+
 }

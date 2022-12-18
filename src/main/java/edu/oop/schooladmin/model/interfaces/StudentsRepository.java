@@ -17,9 +17,15 @@ public interface StudentsRepository {
 
     List<Student> getAllStudents();
 
-    List<Student> getStudentsByFirstName(String firstName);
-
-    List<Student> getStudentsByLastName(String lastName);
+    /**
+     * Поиск по имени и/или фамилии. Допускается частичное совпадение.
+     * 
+     * @param nameSample Имя, фамилия, или и то и другое через пробел.
+     *                    Имя и фамилию допускается предоставить не полностью -
+     *                    поиск осуществляется по частичному совпадению.
+     * @return Экземпляр, найденной сущности или null если запись не найдена.
+     */
+    List<Student> getStudentByName(String nameSample);
 
     List<Student> getStudentsByGroupId(int groupId);
 

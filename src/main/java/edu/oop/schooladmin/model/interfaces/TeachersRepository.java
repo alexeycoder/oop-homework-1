@@ -17,23 +17,21 @@ public interface TeachersRepository {
 
     List<Teacher> getAllTeachers();
 
-    List<Teacher> getTeachersByFirstName(String firstName);
-
-    List<Teacher> getTeachersByLastName(String lastName);
-
     /**
-     * Поиск по имени и/илм фамилии. Допускается частичное совпадение.
+     * Поиск по имени и/или фамилии. Допускается частичное совпадение.
      * 
-     * @param namePattern Имя, фамилия, или и то и другое через пробел.
-     *                    Имя и фамилию допускается предоставить не полностью -
-     *                    поиск осуществляется по частичному совпадению.
+     * @param nameSample Имя, фамилия, или и то и другое через пробел.
+     *                   Имя и фамилию допускается предоставить не полностью -
+     *                   поиск осуществляется по частичному совпадению.
      * @return Экземпляр, найденной сущности или null если запись не найдена.
      */
-    List<Teacher> getTeachersByName(String namePattern);
+    List<Teacher> getTeachersByName(String nameSample);
 
     List<Teacher> getTeachersByBirthDate(LocalDate from, LocalDate to);
 
     List<Teacher> getTeachersByGrade(int from, int to);
+
+    List<Teacher> getTeachersByDisciplineId(int disciplineId);
 
     // update
 
