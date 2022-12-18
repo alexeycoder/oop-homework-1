@@ -12,7 +12,7 @@ import edu.oop.schooladmin.client.viewmodels.ViewModelBase;
 import edu.oop.utils.Console;
 
 public class ConsoleView implements ViewBase {
-	protected static final Scanner SCANNER = new Scanner(System.in);
+	protected static final Scanner SCANNER = new Scanner(System.in,"Cp866");
 
 	private static final String PROMPT_ENTER = "Нажмите Ввод чтобы продолжить...";
 	private static final String WARN_WRONG_MENU_ITEM = "Некорректный ввод: требуется выбрать пункт меню. "
