@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import edu.oop.schooladmin.model.entities.TeacherAppointment;
 
 public class TeacherAppointmentsTable {
+
 	// public static void main(String[] args) {
 	// 	// ПРОВЕРКА
 	// 	System.out.println(appointments());
