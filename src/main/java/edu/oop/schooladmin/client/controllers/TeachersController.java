@@ -101,6 +101,8 @@ public class TeachersController extends ControllerBase {
 				}
 			}
 
+			teacher = null;
+
 		} while (view.askYesNo("Повторить поиск? (Y/n)", true));
 	}
 

@@ -11,7 +11,7 @@ import edu.oop.schooladmin.client.views.ViewBase;
 import edu.oop.schooladmin.model.interfaces.DataProvider;
 
 public class DisciplinesController extends ControllerBase {
-	
+
 	private final ControllersBag controllersBag;
 
 	public DisciplinesController(DataProvider dataProvider, ViewBase viewManager, ControllersBag controllersBag) {
@@ -43,11 +43,11 @@ public class DisciplinesController extends ControllerBase {
 	private void showAll() {
 		ArrayList<DisciplineViewModel> resultList = new ArrayList<>();
 
-		var disciplinesRepository = dp.disciplinesRepository();
-		var crossResolver = dp.teachersService();
+		var disciplinesRepo = dp.disciplinesRepository();
+		var teachersRepo = dp.teachersRepository();
 
-		for (var discipline : disciplinesRepository.getAllDisciplines()) {
-			var teachers = crossResolver.getTeachersByDisciplineId(discipline.getDisciplineId());
+		for (var discipline : disciplinesRepo.getAllDisciplines()) {
+			var teachers = teachersRepo.getTeachersByDisciplineId(discipline.getDisciplineId());
 			resultList.add(new DisciplineViewModel(discipline, teachers));
 		}
 		view.clear();
