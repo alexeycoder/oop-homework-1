@@ -93,9 +93,9 @@ public class Commons {
 			// HEADER_KEY, "РЕДАКТИРОВАНИЕ УЧЕНИКА",
 			1, "Имя/Фамилия",
 			2, "Дата рождения",
-			3, "Группа",
+			3, "Категория",
 
-			CMD_GO_BACK, "Отменить");
+			CMD_GO_BACK, "Продолжить");
 
 	public static final Map<Object, String> EDIT_TEACHER_MENU = Map.of(
 			// HEADER_KEY, "РЕДАКТИРОВАНИЕ УЧИТЕЛЯ",

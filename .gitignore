@@ -1,6 +1,7 @@
 [Ii]mages/
 [Tt]est/
 .vscode/
+SCHEME.md
 
 # Compiled class file
 *.class
