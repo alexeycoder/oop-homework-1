@@ -6,6 +6,8 @@ public class Group {
 	private char classMark;
 	private Integer teacherId;
 
+	public Group() {
+	}
 
 	public Group(Integer groupId, int classYear, char classMark, Integer teacherId) {
 		this.groupId = groupId;

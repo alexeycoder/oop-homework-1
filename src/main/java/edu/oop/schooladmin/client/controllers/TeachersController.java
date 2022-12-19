@@ -1,6 +1,5 @@
 package edu.oop.schooladmin.client.controllers;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +10,7 @@ import edu.oop.schooladmin.client.controllers.MainController.ControllersBag;
 import edu.oop.schooladmin.client.viewmodels.Commons;
 import edu.oop.schooladmin.client.viewmodels.TeacherViewModel;
 import edu.oop.schooladmin.client.views.ViewBase;
+import edu.oop.schooladmin.model.entities.Group;
 import edu.oop.schooladmin.model.entities.Teacher;
 import edu.oop.schooladmin.model.interfaces.DataProvider;
 
@@ -58,8 +58,6 @@ public class TeachersController extends ControllerBase {
 		view.waitToProceed();
 	}
 
-	
-
 	private void showOneById(Teacher teacher) {
 		view.clear();
 		view.showText("ПОИСК УЧИТЕЛЯ ПО ID");
@@ -76,7 +74,7 @@ public class TeachersController extends ControllerBase {
 			TeacherViewModel viewModel = new TeacherViewModel(teacher, groups);
 			view.showList(List.of(viewModel), "Найдена запись:");
 
-			if (view.askYesNo("Показать назначения учителя? (Y/n)", true)) {
+			if (view.askYesNo("Показать назначения учителя? (Д/н)", true)) {
 				var possibleMenuId = findSuitableMenuId(Commons.TEACHER_APPOINTMENTS_MENU, "учител");
 				if (possibleMenuId.isPresent()) {
 					var appointmentsController = controllersBag.teacherAppointmentsController();
@@ -88,15 +86,16 @@ public class TeachersController extends ControllerBase {
 
 			teacher = null;
 
-		} while (view.askYesNo("Повторить поиск? (Y/n)", true));
+		} while (view.askYesNo("Повторить поиск? (Д/н)", true));
 	}
 
 	private void showAllByName() {
 		view.clear();
 		view.showText("ПОИСК УЧИТЕЛЯ ПО ИМЕНИ/ФАМИЛИИ");
 		do {
+			view.showEmpty();
 			var answer = view.askString(
-					"\nВведите имя и/или фамилию в любом порядке и/или частично"
+					"Введите имя и/или фамилию в любом порядке и/или частично"
 							+ " (пустой Ввод для отмены): ",
 					null, null);
 			if (answer.isEmpty()) {
@@ -116,7 +115,7 @@ public class TeachersController extends ControllerBase {
 					.map(t -> new TeacherViewModel(t, groupsRepo.getGroupsByTeacherId(t.getTeacherId()))).toList();
 			view.showList(resultList, "Найденные записи:");
 
-		} while (view.askYesNo("Повторить поиск? (Y/n)", true));
+		} while (view.askYesNo("Повторить поиск? (Д/н)", true));
 	}
 
 	private void addNew() {
@@ -124,40 +123,38 @@ public class TeachersController extends ControllerBase {
 		view.showText("ДОБАВЛЕНИЕ УЧИТЕЛЯ");
 		boolean cancelled = false;
 		do {
-			var firstName = view.askString("\nВведите имя (пустой Ввод отменит добавление): ", null, null);
-			if (firstName.isEmpty()) {
-				cancelled=true;
+			Teacher teacher = new Teacher();
+			view.showEmpty();
+			if (editName(teacher) == null) {
+				cancelled = true;
 				break;
 			}
-			var lastName = view.askString("\nВведите фамилию (пустой Ввод отменит добавление): ", null, null);
-			if (lastName.isEmpty()) {
-				cancelled=true;
+			if (editBirthDate(teacher) == null) {
+				cancelled = true;
 				break;
 			}
-			var strDate = view.askString(
-					"\nВведите дату рождения в формате YYYY-MM-DD (пустой Ввод отменит добавление): ",
-					s -> s.matches("^\\d{4}-\\d{2}-\\d{2}$"),
-					"Некорректный ввод: не соответствует формату YYYY-MM-DD.");
-			if (strDate.isEmpty()) {
-				cancelled=true;
-				break;
-			}
-			LocalDate birthDate = LocalDate.parse(strDate.get());
-
-			OptionalInt grade = view.askInteger(
-					"\nВведите категорию учителя (пустой Ввод отменит добавление): : ", 1, 20);
-			if (grade.isEmpty()) {
-				cancelled=true;
+			if (editGrade(teacher) == null) {
+				cancelled = true;
 				break;
 			}
 
-			Teacher teacher = new Teacher(null, firstName.get(), lastName.get(), birthDate, grade.getAsInt());
 			teacher = dp.teachersRepository().addTeacher(teacher);
 
 			view.showList(List.of(new TeacherViewModel(teacher, null)), "\nУспешно добавлен учитель:");
 
-			if (view.askYesNo("Добавить назначение? (Y/n)", true)) {
-				var possibleMenuId = findSuitableMenuId(Commons.TEACHER_APPOINTMENTS_MENU, "Редактировать");
+			if (view.askYesNo("Добавить классное руководство? (Д/н)", true)) {
+				var group = editGroup(teacher);
+				if (group != null) {
+					if (dp.groupsRepository().updateGroup(group)) {
+						view.showText("Классное руководство успешно назначено.");
+					} else {
+						view.showText("Что-то пошло не так.");
+					}
+				}
+			}
+
+			if (view.askYesNo("Добавить назначение? (Д/н)", true)) {
+				var possibleMenuId = findSuitableMenuId(Commons.TEACHER_APPOINTMENTS_MENU, "Добавить");
 				if (possibleMenuId.isPresent()) {
 					var appointmentsController = controllersBag.teacherAppointmentsController();
 					appointmentsController.switchToAction(possibleMenuId.getAsInt(), teacher);
@@ -165,27 +162,120 @@ public class TeachersController extends ControllerBase {
 					view.showText("Что-то пошло не так.");
 				}
 			}
-		} while (view.askYesNo("Добавить ещё? (Y/n)", true));
+		} while (view.askYesNo("Добавить ещё учителя (Д/н)", true));
 
-		if(cancelled){
+		if (cancelled) {
 			view.showText("Добавление отменено.");
 			view.waitToProceed();
 		}
 	}
 
 	private void edit(Teacher teacher) {
-
-	}
-
-	private void delete(Teacher teacher) {
 		view.clear();
-		view.showText("УДАЛЕНИЕ УЧИТЕЛЯ ПО ID");
+		view.showText("РЕДАКТИРОВАНИЕ УЧИТЕЛЯ");
+		var groupsRepo = dp.groupsRepository();
+		boolean cancelled = false;
 		do {
-
 			if (teacher == null) {
 				teacher = askTeacher();
 				if (teacher == null) {
-					return;
+					cancelled = true;
+					break;
+				}
+			}
+
+			do {
+				view.clear();
+				view.showList(
+						List.of(new TeacherViewModel(teacher, groupsRepo.getGroupsByTeacherId(teacher.getTeacherId()))),
+						"РЕДАКТИРОВАНИЕ УЧИТЕЛЯ");
+
+				var menuModel = Commons.EDIT_STUDENT_MENU;
+				view.showMenu(menuModel);
+				Object userChoice = view.askUserChoice("Выберите параметр для изменения: ", menuModel);
+				if (userChoice.equals(Commons.CMD_GO_BACK)) {
+					break;
+				}
+
+				var bkpTeacher = new Teacher(teacher);
+
+				if (userChoice instanceof Integer menuId) {
+					Object result = null;
+					switch (menuId) {
+						case 1 -> result = editName(teacher);
+						case 2 -> result = editBirthDate(teacher);
+						case 3 -> result = editGrade(teacher);
+						// case 4 -> result = editGroup(teacher);
+						// case 5 -> result = editAppointment(teacher);
+						default -> throw new NoSuchElementException();
+					}
+
+					if (result != null && view.askYesNo("Сохранить изменения? (Д/н)", true)) {
+						if (dp.teachersRepository().updateTeacher(teacher)) {
+							view.showText("Изменения успешно сохранены.");
+						} else {
+							view.showText("Что-то пошло не так. Изменения не были сохранены.");
+						}
+						view.waitToProceed();
+					} else {
+						teacher = bkpTeacher;
+					}
+				}
+
+			} while (true); // GO_BACK see above
+
+			teacher = null;
+
+		} while (view.askYesNo("Редактировать другого учителя? (Д/н)", true));
+
+		if (cancelled) {
+			view.showText("Редактирование отменено.");
+		}
+		view.waitToProceed();
+	}
+
+	private Integer editGrade(Teacher teacher) {
+		assert teacher != null;
+		OptionalInt grade = view.askInteger(
+				"Введите категорию учителя (пустой Ввод чтобы отменить): ", 1, 20);
+		if (grade.isPresent()) {
+			teacher.setGrade(grade.getAsInt());
+			return grade.getAsInt();
+		}
+		return null;
+	}
+
+	private Group editGroup(Teacher teacher) {
+		assert teacher != null;
+		do {
+			Group group = askGroup();
+			if (group == null) {
+				return null;
+			}
+			if (group.getTeacherId() == null) {
+				group.setTeacherId(teacher.getTeacherId());
+				return group;
+			} else {
+				view.showText("У группы уже есть классный руководитель. Виберите другую группу.");
+				continue;
+			}
+		} while (true);
+	}
+
+	// private editAppointment(teacher){
+	// }
+
+	private void delete(Teacher teacher) {
+		view.clear();
+		view.showText("УДАЛЕНИЕ УЧИТЕЛЯ");
+		view.showText("(связанные назначения будут также удалены)");
+		boolean cancelled = false;
+		do {
+			if (teacher == null) {
+				teacher = askTeacher();
+				if (teacher == null) {
+					cancelled = true;
+					break;
 				}
 
 				var groupsRepo = dp.groupsRepository();
@@ -194,7 +284,7 @@ public class TeachersController extends ControllerBase {
 				view.showList(List.of(viewModel), "Найдена запись:");
 			}
 
-			if (view.askYesNo("Удалить? (y/N)", false)) {
+			if (view.askYesNo("Удалить? (Д/н)", false)) {
 				int teacherId = teacher.getTeacherId();
 				var teachersRepo = dp.teachersRepository();
 				if (teachersRepo.removeTeacher(teacherId)) {
@@ -204,19 +294,13 @@ public class TeachersController extends ControllerBase {
 				view.showText("Удаление отменено.");
 			}
 
-			// if (view.askYesNo("Показать назначения учителя? (Y/n)", true)) {
-			// var possibleMenuId = findSuitableMenuId(Commons.TEACHER_APPOINTMENTS_MENU,
-			// "учител");
-			// if (possibleMenuId.isPresent()) {
-			// var appointmentsController = controllersBag.teacherAppointmentsController();
-			// appointmentsController.switchToAction(possibleMenuId.getAsInt(), teacher);
-			// } else {
-			// view.showText("Что-то пошло не так.");
-			// }
-			// }
-
 			teacher = null;
 
-		} while (view.askYesNo("Удалить ещё? (Y/n)", true));
+		} while (view.askYesNo("Удалить ещё? (д/Н)", true));
+
+		if (cancelled) {
+			view.showText("Удаление отменено.");
+		}
+		view.waitToProceed();
 	}
 }

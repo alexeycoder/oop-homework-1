@@ -27,7 +27,7 @@ public class GroupsTable extends QueryableBase<Group> {
 
 	@Override
 	protected void setEntryId(Group entry, int id) {
-		entry.getGroupId();
+		entry.setGroupId(id);
 	}
 
 	@Override

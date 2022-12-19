@@ -5,10 +5,12 @@ import java.util.List;
 import edu.oop.schooladmin.model.entities.Group;
 import edu.oop.schooladmin.model.entities.Student;
 import edu.oop.schooladmin.model.entities.Teacher;
+import edu.oop.schooladmin.model.entities.TeacherAppointment;
 import edu.oop.schooladmin.model.interfaces.GroupsRepository;
 import edu.oop.schooladmin.testdatatables.GroupsTable;
 import edu.oop.schooladmin.testdatatables.Queryable;
 import edu.oop.schooladmin.testdatatables.StudentsTable;
+import edu.oop.schooladmin.testdatatables.TeacherAppointmentsTable;
 import edu.oop.schooladmin.testdatatables.TeachersTable;
 
 public class TestDbGroupsRepository implements GroupsRepository {
@@ -16,11 +18,13 @@ public class TestDbGroupsRepository implements GroupsRepository {
     private final Queryable<Group> groups;
     private final Queryable<Teacher> teachers;
     private final Queryable<Student> students;
+    private final Queryable<TeacherAppointment> teacherAppointments;
 
     public TestDbGroupsRepository() {
         groups = GroupsTable.instance();
         teachers = TeachersTable.instance();
         students = StudentsTable.instance();
+        teacherAppointments = TeacherAppointmentsTable.instance();
     }
 
     /**
@@ -50,10 +54,12 @@ public class TestDbGroupsRepository implements GroupsRepository {
      *         целостность БД.
      */
     private boolean checkRemoveValidity(Group group) {
-        // Удаление записи Group разрешается всегда.
-        // Однако при удалении необходимо обеспечить об-null-ение соответствующей
+        // Удаление записи Group разрешается только при отсутствии Назначений Учителей
+        // ссылающихся на группу.
+        // Кроме того при удалении необходимо обеспечить об-null-ение соответствующей
         // внешней ссылки на удаляемую группу у всех учеников.
-        return true;
+        var groupId = group.getGroupId();
+        return !teacherAppointments.queryAll().anyMatch(ta -> groupId.equals(ta.getGroupId()));
     }
 
     private void resetGroupOnRelatedStudents(int groupId) {

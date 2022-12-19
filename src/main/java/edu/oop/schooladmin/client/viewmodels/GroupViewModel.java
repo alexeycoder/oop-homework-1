@@ -1,6 +1,5 @@
 package edu.oop.schooladmin.client.viewmodels;
 
-import edu.oop.schooladmin.model.entities.Discipline;
 import edu.oop.schooladmin.model.entities.Group;
 import edu.oop.schooladmin.model.entities.Teacher;
 

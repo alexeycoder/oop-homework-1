@@ -26,6 +26,11 @@ public class ConsoleView implements ViewBase {
 	}
 
 	@Override
+	public void showEmpty() {
+		System.out.println();
+	}
+
+	@Override
 	public void waitToProceed() {
 		System.out.println(PROMPT_ENTER);
 		SCANNER.nextLine();

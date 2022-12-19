@@ -1,5 +1,6 @@
 package edu.oop.schooladmin.client.controllers;
 
+import java.time.LocalDate;
 import java.util.Map;
 import java.util.OptionalInt;
 
@@ -8,8 +9,10 @@ import edu.oop.schooladmin.client.viewmodels.Commons;
 import edu.oop.schooladmin.client.views.ViewBase;
 import edu.oop.schooladmin.model.entities.Discipline;
 import edu.oop.schooladmin.model.entities.Group;
+import edu.oop.schooladmin.model.entities.Person;
 import edu.oop.schooladmin.model.entities.Student;
 import edu.oop.schooladmin.model.entities.Teacher;
+import edu.oop.schooladmin.model.entities.TeacherAppointment;
 import edu.oop.schooladmin.model.interfaces.DataProvider;
 
 public abstract class ControllerBase {
@@ -50,7 +53,7 @@ public abstract class ControllerBase {
 	protected abstract void switchToAction(int menuId, Object relatedEntity);
 
 	protected void dummyAction() {
-		System.out.println("Приветики. Тут пока ничего.");
+		System.out.println("Приветики. Данная функция ожидается в следующей версии...");
 		view.waitToProceed();
 	}
 
@@ -80,7 +83,7 @@ public abstract class ControllerBase {
 		Student student = null;
 		int id;
 		do {
-			OptionalInt answer = view.askInteger("\nВведите ID ученика (или пустой Ввод для отмены): ", 0, null);
+			OptionalInt answer = view.askInteger("Введите ID ученика (или пустой Ввод чтобы отменить): ", 0, null);
 			if (answer.isEmpty()) {
 				return null;
 			}
@@ -88,7 +91,7 @@ public abstract class ControllerBase {
 			var studentsRepo = dp.studentsRepository();
 			student = studentsRepo.getStudentById(id);
 		} while (student == null
-				&& view.askYesNo(String.format("Записи для ID %d не найдено.\nПовторить поиск? (Y/n)", id), true));
+				&& view.askYesNo(String.format("Записи с ID %d не найдено.\nПовторить поиск? (Д/н)", id), true));
 
 		return student;
 	}
@@ -97,7 +100,7 @@ public abstract class ControllerBase {
 		Teacher teacher = null;
 		int id;
 		do {
-			OptionalInt answer = view.askInteger("\nВведите ID учителя (или пустой Ввод для отмены): ", 0, null);
+			OptionalInt answer = view.askInteger("Введите ID учителя (или пустой Ввод чтобы отменить): ", 0, null);
 			if (answer.isEmpty()) {
 				return null;
 			}
@@ -105,14 +108,14 @@ public abstract class ControllerBase {
 			var teachersRepo = dp.teachersRepository();
 			teacher = teachersRepo.getTeacherById(id);
 		} while (teacher == null
-				&& view.askYesNo(String.format("Записи для ID %d не найдено.\nПовторить поиск? (Y/n)", id), true));
+				&& view.askYesNo(String.format("Записи с ID %d не найдено.\nПовторить поиск? (Д/н)", id), true));
 		return teacher;
 	}
 
 	protected Group askGroup() {
 		Group group = null;
 		do {
-			var answer = view.askInteger("Введите номер учебного года (или пустой Ввод для отмены): ", 1, null);
+			var answer = view.askInteger("Введите номер учебного года (или пустой Ввод чтобы отменить): ", 1, 12);
 			if (answer.isEmpty()) {
 				return null;
 			}
@@ -124,7 +127,7 @@ public abstract class ControllerBase {
 				continue;
 			}
 
-			var answer2 = view.askString("Введите букву класса (или пустой Ввод для отмены): ",
+			var answer2 = view.askString("Введите букву класса (или пустой Ввод чтобы отменить): ",
 					s -> s.length() > 0,
 					"Некорректный ввод: требуется ввести букву класса.");
 			if (answer2.isEmpty()) {
@@ -139,7 +142,7 @@ public abstract class ControllerBase {
 					view.showText("Предупреждение: В базе найдено несколько идентичных групп!");
 				}
 			}
-		} while (group == null && view.askYesNo("Группа не найдена. Повторить поиск? (Y/n)", true));
+		} while (group == null && view.askYesNo("Группа не найдена. Повторить поиск? (Д/н)", true));
 
 		return group;
 	}
@@ -147,7 +150,7 @@ public abstract class ControllerBase {
 	protected Discipline askDiscipline() {
 		Discipline discipline = null;
 		do {
-			var answer = view.askString("Введите название или ID предмета (или пустой Ввод для отмены): ", null,
+			var answer = view.askString("Введите название или ID предмета (или пустой Ввод чтобы отменить): ", null,
 					null);
 			if (answer.isEmpty()) {
 				return null;
@@ -160,8 +163,54 @@ public abstract class ControllerBase {
 			} else { // иначе пытаемся искать по наименованию
 				discipline = disciplinesRepo.getDisciplineByName(rawStrAnswer);
 			}
-		} while (discipline == null && view.askYesNo("Предмет не найден. Повторить поиск? (Y/n)", true));
+		} while (discipline == null && view.askYesNo("Предмет не найден. Повторить поиск? (Д/н)", true));
 
 		return discipline;
+	}
+
+	protected TeacherAppointment askAppointment() {
+		TeacherAppointment appointment = null;
+		int id;
+		do {
+			OptionalInt answer = view.askInteger("Введите ID назначения (или пустой Ввод чтобы отменить): ", 0, null);
+			if (answer.isEmpty()) {
+				return null;
+			}
+			id = answer.getAsInt();
+			var teacherAppointmentsRepo = dp.teacherAppointmentsRepository();
+			appointment = teacherAppointmentsRepo.getTeacherAppointmentById(id);
+		} while (appointment == null
+				&& view.askYesNo(String.format("Назначения с ID %d не найдено.\nПовторить поиск? (Д/н)", id), true));
+
+		return appointment;
+	}
+
+	protected String[] editName(Person person) {
+		assert person != null;
+		var firstName = view.askString("Введите имя (пустой Ввод чтобы отменить): ", null, null);
+		if (firstName.isEmpty()) {
+			return null;
+		}
+		var lastName = view.askString("Введите фамилию (пустой Ввод чтобы отменить): ", null, null);
+		if (lastName.isEmpty()) {
+			return null;
+		}
+		person.setFirstName(firstName.get());
+		person.setLastName(lastName.get());
+		return new String[] { firstName.get(), lastName.get() };
+	}
+
+	protected LocalDate editBirthDate(Person person) {
+		assert person != null;
+		var strDate = view.askString(
+				"Введите дату рождения в формате YYYY-MM-DD (пустой Ввод чтобы отменить): ",
+				s -> s.matches("^\\d{4}-\\d{2}-\\d{2}$"),
+				"Некорректный ввод: не соответствует формату YYYY-MM-DD.");
+		if (strDate.isEmpty()) {
+			return null;
+		}
+		LocalDate birthDate = LocalDate.parse(strDate.get());
+		person.setBirthDate(birthDate);
+		return birthDate;
 	}
 }
