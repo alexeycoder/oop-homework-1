@@ -35,5 +35,4 @@ public class TeacherAppointmentsViewModel extends ViewModelBase {
 		}
 		return sb.toString();
 	}
-
 }

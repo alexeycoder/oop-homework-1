@@ -56,6 +56,12 @@ public class SqlRatingsRepository implements RatingsRepository {
     }
 
     @Override
+    public List<Rating> getAllRatings() {
+        String sql = "SELECT ratingId, studentId, disciplineId, dateTime, value, commentary FROM Ratings";
+        return getRatingsDataList(sql);
+    }
+
+    @Override
     public List<Rating> getRatingsByStudentId(int studentId) {
         String sql = "SELECT ratingId, studentId, disciplineId, dateTime, value, commentary FROM Ratings WHERE studentId=?";
         List<Object> parametersList = new ArrayList<>();

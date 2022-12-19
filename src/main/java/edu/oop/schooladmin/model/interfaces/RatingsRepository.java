@@ -15,6 +15,8 @@ public interface RatingsRepository {
 
 	Rating getRatingById(int ratingId);
 
+	List<Rating> getAllRatings();
+
 	List<Rating> getRatingsByStudentId(int studentId);
 
 	List<Rating> getRatingsByDisciplineId(int disciplineId);

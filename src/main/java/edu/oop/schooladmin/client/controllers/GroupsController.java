@@ -52,7 +52,7 @@ public class GroupsController extends ControllerBase {
 			resultList.add(new GroupViewModel(group, teacher));
 		}
 		view.clear();
-		view.showList(resultList, "СПИСОК ГРУПП:");
+		view.showList(resultList, "СПИСОК ГРУПП");
 		view.waitToProceed();
 	}
 
@@ -160,7 +160,6 @@ public class GroupsController extends ControllerBase {
 		view.showText("УДАЛЕНИЕ ГРУППЫ");
 		view.showText("(все ссылки на группу будут также удалены у учеников)");
 		var teachersRepo = dp.teachersRepository();
-		// var teacherAppointmentsRepo = dp.teacherAppointmentsRepository();
 		boolean cancelled = false;
 		do {
 			if (group == null) {

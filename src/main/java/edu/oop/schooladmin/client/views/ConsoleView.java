@@ -138,5 +138,4 @@ public class ConsoleView implements ViewBase {
 			return Optional.<String>empty();
 		}
 	}
-
 }

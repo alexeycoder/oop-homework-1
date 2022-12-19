@@ -37,5 +37,4 @@ public class StudentViewModel extends ViewModelBase {
 		return String.format("(ID %d) %-12s %-12s", student.getStudentId(), student.getFirstName(),
 				student.getLastName());
 	}
-
 }

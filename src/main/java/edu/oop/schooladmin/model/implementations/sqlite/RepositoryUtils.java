@@ -3,9 +3,8 @@ package edu.oop.schooladmin.model.implementations.sqlite;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.sql.Statement;
+import java.util.List;
 
 public class RepositoryUtils {
 
@@ -20,7 +19,7 @@ public class RepositoryUtils {
         
     }
 
-    public void setTable(String sql, List parameters){
+    public void setTable(String sql, List<Object> parameters){
         try (PreparedStatement statement = this.connection.connection.prepareStatement(sql)) {
             for (int i = 0; i < parameters.size(); i++) {
                 statement.setObject(i+1, parameters.get(i));
@@ -40,7 +39,7 @@ public class RepositoryUtils {
         }
     }
 
-    public ResultSet getFromTable(String sql, List parameters){
+    public ResultSet getFromTable(String sql, List<Object> parameters){
         ResultSet resultSet;
         try{
             PreparedStatement statement = this.connection.connection.prepareStatement(sql);

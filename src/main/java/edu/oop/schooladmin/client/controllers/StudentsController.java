@@ -55,7 +55,7 @@ public class StudentsController extends ControllerBase {
 			resultList.add(new StudentViewModel(student, group));
 		}
 		view.clear();
-		view.showList(resultList, "СПИСОК УЧЕНИКОВ:");
+		view.showList(resultList, "СПИСОК УЧЕНИКОВ");
 		view.waitToProceed();
 	}
 
@@ -78,7 +78,7 @@ public class StudentsController extends ControllerBase {
 			view.showList(List.of(viewModel), "Найдена запись:");
 
 			if (view.askYesNo("Показать оценки ученика? (Д/н)", true)) {
-				var possibleMenuId = findSuitableMenuId(Commons.RATINGS_MENU, "ученик");
+				var possibleMenuId = findSuitableMenuId(Commons.RATINGS_MENU, "оценки ученик");
 				if (possibleMenuId.isPresent()) {
 					var ratingsController = controllersBag.ratingsController();
 					ratingsController.switchToAction(possibleMenuId.getAsInt(), student);

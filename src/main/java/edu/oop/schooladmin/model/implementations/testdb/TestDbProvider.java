@@ -9,7 +9,6 @@ import edu.oop.schooladmin.model.interfaces.RatingsRepository;
 import edu.oop.schooladmin.model.interfaces.StudentsRepository;
 import edu.oop.schooladmin.model.interfaces.TeacherAppointmentsRepository;
 import edu.oop.schooladmin.model.interfaces.TeachersRepository;
-// import edu.oop.schooladmin.model.interfaces.TeachersService;
 import edu.oop.schooladmin.model.interfaces.UserRolesRepository;
 import edu.oop.schooladmin.model.interfaces.UsersRepository;
 
@@ -21,7 +20,6 @@ public class TestDbProvider implements DataProvider {
 	private final StudentsRepository studentsRepository;
 	private final TeacherAppointmentsRepository teacherAppointmentsRepository;
 	private final RatingsRepository ratingsRepository;
-	// private final TeachersService teachersService;
 
 	public TestDbProvider() {
 		// repos
@@ -31,10 +29,6 @@ public class TestDbProvider implements DataProvider {
 		this.studentsRepository = new TestDbStudentsRepository();
 		this.teacherAppointmentsRepository = new TestDbTeacherAppointmentsRepository();
 		this.ratingsRepository = new TestDbRatingsRepository();
-		// // services
-		// this.teachersService = new TestDbTeachersService(
-		// this.teachersRepository, this.teacherAppointmentsRepository,
-		// this.groupsRepository);
 	}
 
 	@Override
@@ -78,9 +72,4 @@ public class TestDbProvider implements DataProvider {
 	public UserRolesRepository userRolesRepository() {
 		throw new NoSuchElementException();
 	}
-
-	// @Override
-	// public TeachersService teachersService() {
-	// return teachersService;
-	// }
 }
