@@ -1,9 +1,10 @@
 package edu.oop.schooladmin.model.implementations.sqlite;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
 import org.sqlite.JDBC;
- 
-import java.sql.*;
-import java.util.*;
 
     public class ConnectionDb {
  
@@ -20,5 +21,4 @@ import java.util.*;
             // Выполняем подключение к базе данных
             this.connection = DriverManager.getConnection(CON_STR);
         }
-
     }

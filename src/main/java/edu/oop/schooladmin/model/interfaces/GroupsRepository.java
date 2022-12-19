@@ -6,10 +6,6 @@ import edu.oop.schooladmin.model.entities.Group;
 
 public interface GroupsRepository {
 
-	// linked repos
-
-	// TeachersRepository teachersRepository();
-
 	// create
 
 	Group addGroup(Group group);
@@ -25,8 +21,6 @@ public interface GroupsRepository {
 	List<Group> getGroupsByClassYear(int classYear);
 
 	List<Group> getGroupsByClassMark(char classMark);
-
-	// Teacher getClassTeacher(int groupId);
 
 	// update
 

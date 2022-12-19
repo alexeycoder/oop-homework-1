@@ -1,9 +1,6 @@
 package edu.oop.schooladmin.model.implementations.sqlite;
 
 import java.sql.SQLException;
-import java.time.LocalDate;
-
-import edu.oop.schooladmin.model.entities.Student;
 
 public class ControllerForCreateDb {
     public static void main(String[] args) throws SQLException {

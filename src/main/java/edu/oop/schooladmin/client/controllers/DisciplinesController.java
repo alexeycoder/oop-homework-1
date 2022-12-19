@@ -49,7 +49,7 @@ public class DisciplinesController extends ControllerBase {
 			resultList.add(new DisciplineViewModel(discipline, teachers));
 		}
 		view.clear();
-		view.showList(resultList, "ПРЕДМЕТЫ:");
+		view.showList(resultList, "ПРЕДМЕТЫ");
 		view.waitToProceed();
 	}
 }

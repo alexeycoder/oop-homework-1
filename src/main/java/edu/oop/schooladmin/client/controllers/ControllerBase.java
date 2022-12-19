@@ -10,6 +10,7 @@ import edu.oop.schooladmin.client.views.ViewBase;
 import edu.oop.schooladmin.model.entities.Discipline;
 import edu.oop.schooladmin.model.entities.Group;
 import edu.oop.schooladmin.model.entities.Person;
+import edu.oop.schooladmin.model.entities.Rating;
 import edu.oop.schooladmin.model.entities.Student;
 import edu.oop.schooladmin.model.entities.Teacher;
 import edu.oop.schooladmin.model.entities.TeacherAppointment;
@@ -183,6 +184,19 @@ public abstract class ControllerBase {
 				&& view.askYesNo(String.format("Назначения с ID %d не найдено.\nПовторить поиск? (Д/н)", id), true));
 
 		return appointment;
+	}
+
+	protected Rating askRating() {
+		Rating rating = null;
+		do {
+			var answer = view.askInteger("Введите ID оценки (или пустой Ввод чтобы отменить): ", 0, null);
+			if (answer.isEmpty()) {
+				return null;
+			}
+			rating = dp.ratingsRepository().getRatingById(answer.getAsInt());
+		} while (rating == null && view.askYesNo("Оценки с таким ID в журнал нет. Повторить поиск? (Д/н)", true));
+
+		return rating;
 	}
 
 	protected String[] editName(Person person) {

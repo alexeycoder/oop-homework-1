@@ -40,24 +40,6 @@ public class MainController extends ControllerBase {
 
 	private ControllerBase selectController(int menuId) {
 
-		// var dummyController = new ControllerBase(dp, view) {
-
-		// @Override
-		// public void runLifecycle() {
-		// System.out.println("Приветики. Тут пока ничего.");
-		// view.waitToProceed();
-		// }
-
-		// @Override
-		// protected void switchToAction(int menuId, Integer entityId) {
-		// }
-
-		// @Override
-		// protected Map<Object, String> getMenuModel() {
-		// return null;
-		// }
-		// };
-
 		return switch (menuId) {
 			case 1 -> studentsController;
 			case 2 -> teachersController;

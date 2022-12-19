@@ -33,12 +33,6 @@ public class Discipline {
 		this.name = name;
 	}
 
-	// @Override
-	// public void copyProperties(Discipline other) {
-	// 	this.disciplineId = other.disciplineId;
-	// 	this.name = other.name;
-	// }
-
 	@Override
 	public String toString() {
 		return String.format("%d: %s", disciplineId, name);

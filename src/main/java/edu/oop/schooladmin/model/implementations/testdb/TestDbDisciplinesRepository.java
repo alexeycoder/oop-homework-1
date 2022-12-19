@@ -75,15 +75,4 @@ public class TestDbDisciplinesRepository implements DisciplinesRepository {
 			throw new InvalidParameterException("discipline.name");
 		}
 	}
-
-	// /* TODO: Тестовый main(). Удалить потом! */
-	// public static class TestTestDbDisciplinesRepository {
-	// public static void main(String[] args) {
-	// var disciplinesRepository = new TestDbDisciplinesRepository();
-	// System.out.println("=".repeat(30));
-	// for (var entity : disciplinesRepository.getAllDisciplines()) {
-	// System.out.println(entity);
-	// }
-	// }
-	// }
 }

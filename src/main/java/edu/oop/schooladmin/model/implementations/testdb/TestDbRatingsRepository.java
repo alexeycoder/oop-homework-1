@@ -77,6 +77,11 @@ public class TestDbRatingsRepository implements RatingsRepository {
     }
 
     @Override
+    public List<Rating> getAllRatings() {
+        return ratings.queryAll().toList();
+    }
+
+    @Override
     public List<Rating> getRatingsByStudentId(int studentId) {
         return ratings.queryAll()
                 .filter(r -> r.getStudentId() != null && r.getStudentId().equals(studentId))
@@ -126,5 +131,4 @@ public class TestDbRatingsRepository implements RatingsRepository {
         }
         return false;
     }
-
 }

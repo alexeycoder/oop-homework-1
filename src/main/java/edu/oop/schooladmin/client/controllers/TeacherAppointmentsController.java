@@ -64,13 +64,13 @@ public class TeacherAppointmentsController extends ControllerBase {
 				.toList();
 
 		view.clear();
-		view.showList(resultList, "НАЗНАЧЕНИЯ:");
+		view.showList(resultList, "НАЗНАЧЕНИЯ");
 		view.waitToProceed();
 	}
 
 	private void showByTeacher(Teacher teacher) {
 		view.clear();
-		view.showText("НАЗНАЧЕНИЯ ПО УЧИТЕЛЮ:");
+		view.showText("НАЗНАЧЕНИЯ ПО УЧИТЕЛЮ");
 
 		if (teacher == null) {
 			teacher = askTeacher();
@@ -79,22 +79,6 @@ public class TeacherAppointmentsController extends ControllerBase {
 				return;
 			}
 		}
-
-		// while (teacher == null) {
-		// var answer = view.askInteger("Введите ID учителя (или пустой Ввод для
-		// отмены): ", 0, null);
-		// if (answer.isEmpty()) {
-		// return;
-		// }
-		// int teacherId = answer.getAsInt();
-		// var teachersRepo = dp.teachersRepository();
-		// teacher = teachersRepo.getTeacherById(teacherId);
-		// if (teacher == null && !view.askYesNo("Учителя не найдено. Повторить поиск?
-		// (Д/н)", true)) {
-		// view.waitToProceed();
-		// return;
-		// }
-		// }
 
 		view.showEmpty();
 		view.showText(TeacherViewModel.teacherSimplifiedRepr(teacher));
@@ -121,7 +105,7 @@ public class TeacherAppointmentsController extends ControllerBase {
 
 	private void showByDiscipline(Discipline discipline) {
 		view.clear();
-		view.showText("НАЗНАЧЕНИЯ ПО ПРЕДМЕТУ:");
+		view.showText("НАЗНАЧЕНИЯ ПО ПРЕДМЕТУ");
 
 		if (discipline == null) {
 			discipline = askDiscipline();
@@ -155,7 +139,7 @@ public class TeacherAppointmentsController extends ControllerBase {
 
 	private void showByGroup(Group group) {
 		view.clear();
-		view.showText("НАЗНАЧЕНИЯ ПО ГРУППЕ (КЛАССУ):");
+		view.showText("НАЗНАЧЕНИЯ ПО ГРУППЕ (КЛАССУ)");
 
 		if (group == null) {
 			group = askGroup();

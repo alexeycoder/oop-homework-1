@@ -54,7 +54,7 @@ public class TeachersController extends ControllerBase {
 			resultList.add(new TeacherViewModel(teacher, groups));
 		}
 		view.clear();
-		view.showList(resultList, "СПИСОК УЧИТЕЛЕЙ:");
+		view.showList(resultList, "СПИСОК УЧИТЕЛЕЙ");
 		view.waitToProceed();
 	}
 
@@ -284,7 +284,7 @@ public class TeachersController extends ControllerBase {
 				view.showList(List.of(viewModel), "Найдена запись:");
 			}
 
-			if (view.askYesNo("Удалить? (Д/н)", false)) {
+			if (view.askYesNo("Удалить? (д/Н)", false)) {
 				int teacherId = teacher.getTeacherId();
 				var teachersRepo = dp.teachersRepository();
 				if (teachersRepo.removeTeacher(teacherId)) {
@@ -296,7 +296,7 @@ public class TeachersController extends ControllerBase {
 
 			teacher = null;
 
-		} while (view.askYesNo("Удалить ещё? (д/Н)", true));
+		} while (view.askYesNo("Удалить ещё? (Д/н)", true));
 
 		if (cancelled) {
 			view.showText("Удаление отменено.");

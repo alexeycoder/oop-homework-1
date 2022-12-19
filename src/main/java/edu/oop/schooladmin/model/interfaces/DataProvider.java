@@ -17,6 +17,4 @@ public interface DataProvider {
 	UsersRepository usersRepository();
 
 	UserRolesRepository userRolesRepository();
-
-	// TeachersService teachersService();
 }
