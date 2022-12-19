@@ -73,7 +73,7 @@ public class SqlStudentsRepository implements StudentsRepository {
     // }
 
     @Override
-    public List<Student> getStudentByName(String nameSample) {
+    public List<Student> getStudentsByName(String nameSample) {
         // TODO Auto-generated method stub
         return null;
     }

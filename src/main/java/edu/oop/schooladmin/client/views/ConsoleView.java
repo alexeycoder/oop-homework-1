@@ -7,12 +7,13 @@ import java.util.OptionalInt;
 import java.util.Scanner;
 import java.util.function.Function;
 
+import edu.oop.schooladmin.client.AppSettings;
 import edu.oop.schooladmin.client.viewmodels.Commons;
 import edu.oop.schooladmin.client.viewmodels.ViewModelBase;
 import edu.oop.utils.Console;
 
 public class ConsoleView implements ViewBase {
-	protected static final Scanner SCANNER = new Scanner(System.in,"Cp866");
+	protected static final Scanner SCANNER = new Scanner(System.in, AppSettings.CHARSET);
 
 	private static final String PROMPT_ENTER = "Нажмите Ввод чтобы продолжить...";
 	private static final String WARN_WRONG_MENU_ITEM = "Некорректный ввод: требуется выбрать пункт меню. "
@@ -22,6 +23,11 @@ public class ConsoleView implements ViewBase {
 	@Override
 	public void clear() {
 		Console.clearScreen();
+	}
+
+	@Override
+	public void showEmpty() {
+		System.out.println();
 	}
 
 	@Override

@@ -12,6 +12,8 @@ public interface ViewBase {
 
 	void clear();
 
+	void showEmpty();
+
 	void waitToProceed();
 
 	void showGoodbye();

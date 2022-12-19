@@ -10,22 +10,32 @@ public class StudentViewModel extends ViewModelBase {
 	private final String firstName;
 	private final String lastName;
 	private final LocalDate birthDate;
-	private final int classYear;
-	private final char classMark;
+	private final String groupInfo;
 
 	public StudentViewModel(Student student, Group group) {
 		this.id = student.getStudentId();
 		this.firstName = student.getFirstName();
 		this.lastName = student.getLastName();
 		this.birthDate = student.getBirthDate();
-		this.classYear = group.getClassYear();
-		this.classMark = group.getClassMark();
+		if (group == null) {
+			this.groupInfo = null;
+		} else {
+			this.groupInfo = String.format("Класс %d-%s", group.getClassYear(), group.getClassMark());
+		}
 	}
 
 	@Override
 	public String toString() {
-		return String.format("%d.\t%-12s\t%-12s\tРод. %s\tКласс %d-%s", id, firstName, lastName, birthDate, classYear,
-				classMark);
+		String str = String.format("%d.\t%-12s\t%-12s\tРод. %s", id, firstName, lastName, birthDate);
+		if (groupInfo != null) {
+			str += "\t" + groupInfo;
+		}
+		return str;
+	}
+
+	public static String studentSimplifiedRepr(Student student) {
+		return String.format("(ID %d) %-12s %-12s", student.getStudentId(), student.getFirstName(),
+				student.getLastName());
 	}
 
 }

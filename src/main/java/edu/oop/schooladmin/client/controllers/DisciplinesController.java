@@ -12,14 +12,14 @@ import edu.oop.schooladmin.model.interfaces.DataProvider;
 
 public class DisciplinesController extends ControllerBase {
 
-	private final ControllersBag controllersBag;
+	// private final ControllersBag controllersBag;
 
 	public DisciplinesController(DataProvider dataProvider, ViewBase viewManager, ControllersBag controllersBag) {
 		super(dataProvider, viewManager);
 		if (controllersBag == null) {
 			throw new NullPointerException("controllersBag");
 		}
-		this.controllersBag = controllersBag;
+		// this.controllersBag = controllersBag;
 	}
 
 	@Override
@@ -34,8 +34,6 @@ public class DisciplinesController extends ControllerBase {
 			case 2 -> dummyAction();
 			case 3 -> dummyAction();
 			case 4 -> dummyAction();
-			case 5 -> dummyAction();
-			case 6 -> dummyAction();
 			default -> throw new NoSuchElementException();
 		}
 	}
