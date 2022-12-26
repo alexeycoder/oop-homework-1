@@ -10,9 +10,9 @@ import edu.oop.schooladmin.client.viewmodels.Commons;
 import edu.oop.schooladmin.client.viewmodels.GroupViewModel;
 import edu.oop.schooladmin.client.viewmodels.TeacherViewModel;
 import edu.oop.schooladmin.client.views.ViewBase;
+import edu.oop.schooladmin.model.businesslevel.interfaces.DataProvider;
 import edu.oop.schooladmin.model.entities.Group;
 import edu.oop.schooladmin.model.entities.Teacher;
-import edu.oop.schooladmin.model.interfaces.DataProvider;
 
 public class GroupsController extends ControllerBase {
 

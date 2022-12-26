@@ -4,7 +4,7 @@ import java.util.Map;
 
 import edu.oop.schooladmin.client.viewmodels.Commons;
 import edu.oop.schooladmin.client.views.ViewBase;
-import edu.oop.schooladmin.model.interfaces.DataProvider;
+import edu.oop.schooladmin.model.businesslevel.interfaces.DataProvider;
 
 public class MainController extends ControllerBase {
 

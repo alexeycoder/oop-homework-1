@@ -7,6 +7,7 @@ import java.util.OptionalInt;
 import edu.oop.schooladmin.client.AppSettings;
 import edu.oop.schooladmin.client.viewmodels.Commons;
 import edu.oop.schooladmin.client.views.ViewBase;
+import edu.oop.schooladmin.model.businesslevel.interfaces.DataProvider;
 import edu.oop.schooladmin.model.entities.Discipline;
 import edu.oop.schooladmin.model.entities.Group;
 import edu.oop.schooladmin.model.entities.Person;
@@ -14,7 +15,6 @@ import edu.oop.schooladmin.model.entities.Rating;
 import edu.oop.schooladmin.model.entities.Student;
 import edu.oop.schooladmin.model.entities.Teacher;
 import edu.oop.schooladmin.model.entities.TeacherAppointment;
-import edu.oop.schooladmin.model.interfaces.DataProvider;
 
 public abstract class ControllerBase {
 

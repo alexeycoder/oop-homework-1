@@ -11,10 +11,10 @@ import edu.oop.schooladmin.client.viewmodels.Commons;
 import edu.oop.schooladmin.client.viewmodels.RatingViewModel;
 import edu.oop.schooladmin.client.viewmodels.StudentViewModel;
 import edu.oop.schooladmin.client.views.ViewBase;
+import edu.oop.schooladmin.model.businesslevel.interfaces.DataProvider;
 import edu.oop.schooladmin.model.entities.Discipline;
 import edu.oop.schooladmin.model.entities.Rating;
 import edu.oop.schooladmin.model.entities.Student;
-import edu.oop.schooladmin.model.interfaces.DataProvider;
 
 public class RatingsController extends ControllerBase {
 
