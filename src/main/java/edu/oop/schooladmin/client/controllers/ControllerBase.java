@@ -1,8 +1,15 @@
 package edu.oop.schooladmin.client.controllers;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.OptionalInt;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
 
 import edu.oop.schooladmin.client.AppSettings;
 import edu.oop.schooladmin.client.viewmodels.Commons;
@@ -21,6 +28,8 @@ public abstract class ControllerBase {
 	protected final DataProvider dp;
 	protected final ViewBase view;
 
+	private static final Logger logger = LoggerFactory.getLogger(ControllerBase.class);
+
 	public ControllerBase(DataProvider dataProvider, ViewBase viewManager) {
 		this.dp = dataProvider;
 		this.view = viewManager;
@@ -35,7 +44,9 @@ public abstract class ControllerBase {
 			Object userChoice = view.askUserChoice(Commons.MENU_MAKE_YOUR_CHOICE, menuModel);
 			if (userChoice.equals(Commons.CMD_EXIT)) {
 
-				forceExit();
+				// forceExit();
+				view.showGoodbye();
+				return;
 
 			} else if (userChoice.equals(Commons.CMD_GO_BACK)) {
 
@@ -54,14 +65,17 @@ public abstract class ControllerBase {
 	protected abstract void switchToAction(int menuId, Object relatedEntity);
 
 	protected void dummyAction() {
+		logger.debug("Unimplemented function call: {}.",
+				StackWalker.getInstance()
+						.walk(s -> s.skip(1).map(Object::toString).collect(Collectors.joining(", ", "[ ", " ]"))));
 		System.out.println("Приветики. Данная функция ожидается в следующей версии...");
 		view.waitToProceed();
 	}
 
-	protected void forceExit() {
-		view.showGoodbye();
-		System.exit(0);
-	}
+	// protected void forceExit() {
+	// view.showGoodbye();
+	// System.exit(0);
+	// }
 
 	protected OptionalInt findSuitableMenuId(Map<Object, String> menuModel, String stringSample) {
 		assert menuModel != null && stringSample != null && !stringSample.isEmpty();
