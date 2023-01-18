@@ -32,10 +32,15 @@ public class GroupsTable extends SqliteTableBase<Group> {
 		super(connection);
 	}
 
-	private static void bakeEntityToStatement(PreparedStatement ps, Group entity) throws SQLException {
+	private static void bakeEntityToInsertStatement(PreparedStatement ps, Group entity) throws SQLException {
 		ps.setInt(1, entity.getClassYear());
 		ps.setString(2, Character.toString(entity.getClassMark()));
 		ps.setInt(3, entity.getTeacherId());
+	}
+
+	private static void bakeEntityToUpdateStatement(PreparedStatement ps, Group entity) throws SQLException {
+		bakeEntityToInsertStatement(ps, entity);
+		ps.setInt(4, entity.getGroupId());
 	}
 
 	private static Group resultSetToEntity(ResultSet rs) throws SQLException {
@@ -50,7 +55,7 @@ public class GroupsTable extends SqliteTableBase<Group> {
 	@Override
 	public Group add(Group entry) {
 		try (PreparedStatement ps = connection.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS)) {
-			bakeEntityToStatement(ps, entry);
+			bakeEntityToInsertStatement(ps, entry);
 			int affectedRows = ps.executeUpdate();
 			if (affectedRows == 0) {
 				return null;
@@ -106,7 +111,7 @@ public class GroupsTable extends SqliteTableBase<Group> {
 	@Override
 	public boolean update(Group entry) {
 		try (PreparedStatement ps = connection.prepareStatement(updateSql)) {
-			bakeEntityToStatement(ps, entry);
+			bakeEntityToUpdateStatement(ps, entry);
 			int affectedRows = ps.executeUpdate();
 			if (affectedRows == 0) {
 				return false;

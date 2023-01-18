@@ -33,7 +33,7 @@ public class TeacherAppointmentsTable extends SqliteTableBase<TeacherAppointment
 		super(connection);
 	}
 
-	private static void bakeEntityToStatement(PreparedStatement ps, TeacherAppointment entity) throws SQLException {
+	private static void bakeEntityToInsertStatement(PreparedStatement ps, TeacherAppointment entity) throws SQLException {
 		ps.setInt(1, entity.getTeacherId());
 		ps.setInt(2, entity.getDisciplineId());
 
@@ -43,6 +43,11 @@ public class TeacherAppointmentsTable extends SqliteTableBase<TeacherAppointment
 		} else {
 			ps.setNull(3, Types.INTEGER);
 		}
+	}
+
+	private static void bakeEntityToUpdateStatement(PreparedStatement ps, TeacherAppointment entity) throws SQLException {
+		bakeEntityToInsertStatement(ps, entity);
+		ps.setInt(4, entity.getAppointmentId());
 	}
 
 	private static TeacherAppointment resultSetToEntity(ResultSet rs) throws SQLException {
@@ -61,7 +66,7 @@ public class TeacherAppointmentsTable extends SqliteTableBase<TeacherAppointment
 	@Override
 	public TeacherAppointment add(TeacherAppointment entry) {
 		try (PreparedStatement ps = connection.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS)) {
-			bakeEntityToStatement(ps, entry);
+			bakeEntityToInsertStatement(ps, entry);
 			int affectedRows = ps.executeUpdate();
 			if (affectedRows == 0) {
 				return null;
@@ -117,7 +122,7 @@ public class TeacherAppointmentsTable extends SqliteTableBase<TeacherAppointment
 	@Override
 	public boolean update(TeacherAppointment entry) {
 		try (PreparedStatement ps = connection.prepareStatement(updateSql)) {
-			bakeEntityToStatement(ps, entry);
+			bakeEntityToUpdateStatement(ps, entry);
 			int affectedRows = ps.executeUpdate();
 			if (affectedRows == 0) {
 				return false;

@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.oop.schooladmin.client.controllers.MainController.ControllersBag;
 import edu.oop.schooladmin.client.viewmodels.Commons;
 import edu.oop.schooladmin.client.viewmodels.GroupViewModel;
@@ -16,6 +19,7 @@ import edu.oop.schooladmin.model.entities.Teacher;
 
 public class GroupsController extends ControllerBase {
 
+	private static final Logger logger = LoggerFactory.getLogger(GroupsController.class);
 	// private final ControllersBag controllersBag;
 
 	public GroupsController(DataProvider dataProvider, ViewBase viewManager, ControllersBag controllersBag) {
@@ -24,6 +28,7 @@ public class GroupsController extends ControllerBase {
 			throw new NullPointerException("controllersBag");
 		}
 		// this.controllersBag = controllersBag;
+		logger.trace("Controller instance successfully created.");
 	}
 
 	@Override
@@ -32,7 +37,7 @@ public class GroupsController extends ControllerBase {
 	}
 
 	@Override
-	protected void switchToAction(int menuId, Object relatedEntity) {
+	protected boolean switchToAction(int menuId, Object relatedEntity) {
 		switch (menuId) {
 			case 1 -> showAll();
 			case 2 -> addNew(relatedEntity instanceof Teacher teacher ? teacher : null);
@@ -40,6 +45,7 @@ public class GroupsController extends ControllerBase {
 			case 4 -> delete(relatedEntity instanceof Group group ? group : null);
 			default -> throw new NoSuchElementException();
 		}
+		return false;
 	}
 
 	private void showAll() {
@@ -98,7 +104,10 @@ public class GroupsController extends ControllerBase {
 				view.showEmpty();
 				view.showList(List.of(new GroupViewModel(group, teacherHomeroom)),
 						"Успешно назначено классное руководство:");
+
+				logger.info("New group '{}' has been added.", group);
 			} else {
+				logger.warn("Something went wrong when adding a new group '{} {}'.", answer, answer2);
 				view.showText("Что-то пошло не так.");
 			}
 
@@ -140,6 +149,7 @@ public class GroupsController extends ControllerBase {
 				group.setTeacherId(teacher.getTeacherId());
 				var groupsRepo = dp.groupsRepository();
 				groupsRepo.updateGroup(group);
+				logger.info("Group '{}' has been updated.", group);
 			} else {
 				view.showText("Назначение отменено.");
 				view.waitToProceed();
@@ -174,8 +184,10 @@ public class GroupsController extends ControllerBase {
 					null);
 
 			if (dp.groupsRepository().removeGroup(group.getGroupId())) {
+				logger.info("Group '{}' has been deleted.", group);
 				view.showText("Группа успешно удалена.");
 			} else {
+				logger.info("Attempt to delete group '{}' which is yet linked.", group);
 				view.showText(
 						"Невозможно удалить группу: вероятно всё-ещё имеются связанные с ней назначения учителей.");
 			}

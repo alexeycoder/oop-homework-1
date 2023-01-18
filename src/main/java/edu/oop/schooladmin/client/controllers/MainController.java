@@ -2,12 +2,17 @@ package edu.oop.schooladmin.client.controllers;
 
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.oop.schooladmin.client.viewmodels.Commons;
 import edu.oop.schooladmin.client.views.ViewBase;
 import edu.oop.schooladmin.model.businesslevel.interfaces.DataProvider;
 
 public class MainController extends ControllerBase {
 
+	private static final Logger logger = LoggerFactory.getLogger(MainController.class);
+	
 	private final ControllerBase disciplinesController;
 	private final ControllerBase teachersController;
 	private final ControllerBase studentsController;
@@ -25,6 +30,7 @@ public class MainController extends ControllerBase {
 		this.groupsController = new GroupsController(dataProvider, viewManager, bag);
 		this.teacherAppointmentsController = new TeacherAppointmentsController(dataProvider, viewManager, bag);
 		this.ratingsController = new RatingsController(dataProvider, viewManager, bag);
+		logger.trace("Controller instance successfully created.");
 	}
 
 	@Override
@@ -33,9 +39,9 @@ public class MainController extends ControllerBase {
 	}
 
 	@Override
-	protected void switchToAction(int menuId, Object relatedEntity) {
+	protected boolean switchToAction(int menuId, Object relatedEntity) {
 		var controller = selectController(menuId);
-		controller.runLifecycle();
+		return controller.runLifecycle();
 	}
 
 	private ControllerBase selectController(int menuId) {

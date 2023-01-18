@@ -35,13 +35,18 @@ public class RatingsTable extends SqliteTableBase<Rating> {
 		super(connection);
 	}
 
-	private static void bakeEntityToStatement(PreparedStatement ps, Rating entity) throws SQLException {
+	private static void bakeEntityToInsertStatement(PreparedStatement ps, Rating entity) throws SQLException {
 		// (student_id, discipline_id, date_time, value, commentary)
 		ps.setInt(1, entity.getStudentId());
 		ps.setInt(2, entity.getDisciplineId());
 		ps.setString(3, entity.getDateTime().toString());
 		ps.setInt(4, entity.getValue());
 		ps.setString(5, entity.getCommentary());
+	}
+
+	private static void bakeEntityToUpdateStatement(PreparedStatement ps, Rating entity) throws SQLException {
+		bakeEntityToInsertStatement(ps, entity);
+		ps.setInt(6, entity.getRatingId());
 	}
 
 	private static Rating resultSetToEntity(ResultSet rs) throws SQLException {
@@ -58,14 +63,14 @@ public class RatingsTable extends SqliteTableBase<Rating> {
 	@Override
 	public Rating add(Rating entry) {
 		try (PreparedStatement ps = connection.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS)) {
-			bakeEntityToStatement(ps, entry);
+			bakeEntityToInsertStatement(ps, entry);
 			int affectedRows = ps.executeUpdate();
 			if (affectedRows == 0) {
 				return null;
 			}
 			try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
 				if (generatedKeys.next()) {
-					entry.setStudentId(generatedKeys.getInt(1));
+					entry.setRatingId(generatedKeys.getInt(1));
 					return entry;
 				} else {
 					return null;
@@ -114,7 +119,7 @@ public class RatingsTable extends SqliteTableBase<Rating> {
 	@Override
 	public boolean update(Rating entry) {
 		try (PreparedStatement ps = connection.prepareStatement(updateSql)) {
-			bakeEntityToStatement(ps, entry);
+			bakeEntityToUpdateStatement(ps, entry);
 			int affectedRows = ps.executeUpdate();
 			if (affectedRows == 0) {
 				return false;

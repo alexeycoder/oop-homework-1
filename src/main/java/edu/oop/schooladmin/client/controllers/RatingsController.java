@@ -6,6 +6,9 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.OptionalInt;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.oop.schooladmin.client.controllers.MainController.ControllersBag;
 import edu.oop.schooladmin.client.viewmodels.Commons;
 import edu.oop.schooladmin.client.viewmodels.RatingViewModel;
@@ -18,6 +21,7 @@ import edu.oop.schooladmin.model.entities.Student;
 
 public class RatingsController extends ControllerBase {
 
+	private static final Logger logger = LoggerFactory.getLogger(RatingsController.class);
 	// private final ControllersBag controllersBag;
 
 	public RatingsController(DataProvider dataProvider, ViewBase viewManager, ControllersBag controllersBag) {
@@ -26,6 +30,7 @@ public class RatingsController extends ControllerBase {
 			throw new NullPointerException("controllersBag");
 		}
 		// this.controllersBag = controllersBag;
+		logger.trace("Controller instance successfully created.");
 	}
 
 	@Override
@@ -34,7 +39,7 @@ public class RatingsController extends ControllerBase {
 	}
 
 	@Override
-	protected void switchToAction(int menuId, Object relatedEntity) {
+	protected boolean switchToAction(int menuId, Object relatedEntity) {
 		switch (menuId) {
 			case 1 -> showAll();
 			case 2 -> showByStudent(relatedEntity instanceof Student student ? student : null);
@@ -43,6 +48,7 @@ public class RatingsController extends ControllerBase {
 			case 4 -> delete(relatedEntity instanceof Rating rating ? rating : null);
 			default -> throw new NoSuchElementException();
 		}
+		return false;
 	}
 
 	private void showAll() {
@@ -129,18 +135,23 @@ public class RatingsController extends ControllerBase {
 				cancelled = true;
 				break;
 			}
-			var optComment = view.askString("Введите комментарий", null, null);
+			var optComment = view.askString("Введите комментарий: ", null, null);
 			if (optComment.isEmpty()) {
 				cancelled = true;
 				break;
 			}
 			Rating rating = new Rating(student.getStudentId(), discipline.getDisciplineId(), LocalDateTime.now(),
 					ratingValue.getAsInt(), optComment.get());
-			if (dp.ratingsRepository().addRating(rating) != null) {
+
+			Rating addedRating = dp.ratingsRepository().addRating(rating);
+			if (addedRating != null) {
 				view.showEmpty();
-				view.showList(List.of(new RatingViewModel(rating, student, discipline)),
+				view.showList(List.of(new RatingViewModel(addedRating, student, discipline)),
 						"Оценка успешно добавлена:");
+				logger.info("New rating '{}' has been added.", addedRating);
 			} else {
+				logger.warn("Something went wrong when adding a new rating '{}' for '{}' to '{}'.",
+						ratingValue, discipline.getName(), student);
 				view.showText("Что-то пошло не так. Оценка не была добавлена.");
 			}
 
@@ -178,7 +189,9 @@ public class RatingsController extends ControllerBase {
 				if (dp.ratingsRepository().removeRating(rating.getRatingId())) {
 					view.showText("Оценка успешно удалена.");
 					view.showEmpty();
+					logger.info("Rating '{}' has been deleted.", rating);
 				} else {
+					logger.warn("Something went wrong when deleting rating '{}'.", rating);
 					view.showText("Что-то пошло не так. Оценку удалить не удалось.");
 				}
 			} else {

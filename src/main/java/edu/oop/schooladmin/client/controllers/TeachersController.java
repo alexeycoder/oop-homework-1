@@ -6,6 +6,9 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.OptionalInt;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.oop.schooladmin.client.controllers.MainController.ControllersBag;
 import edu.oop.schooladmin.client.viewmodels.Commons;
 import edu.oop.schooladmin.client.viewmodels.TeacherViewModel;
@@ -16,6 +19,7 @@ import edu.oop.schooladmin.model.entities.Teacher;
 
 public class TeachersController extends ControllerBase {
 
+	private static final Logger logger = LoggerFactory.getLogger(TeachersController.class);
 	private final ControllersBag controllersBag;
 
 	public TeachersController(DataProvider dataProvider, ViewBase viewManager, ControllersBag controllersBag) {
@@ -24,6 +28,7 @@ public class TeachersController extends ControllerBase {
 			throw new NullPointerException("controllersBag");
 		}
 		this.controllersBag = controllersBag;
+		logger.trace("Controller instance successfully created.");
 	}
 
 	@Override
@@ -32,16 +37,21 @@ public class TeachersController extends ControllerBase {
 	}
 
 	@Override
-	protected void switchToAction(int menuId, Object relatedEntity) {
+	protected boolean switchToAction(int menuId, Object relatedEntity) {
 		switch (menuId) {
 			case 1 -> showAll();
-			case 2 -> showOneById(relatedEntity instanceof Teacher teacher ? teacher : null);
+			case 2 -> {
+				return showOneById(relatedEntity instanceof Teacher teacher ? teacher : null);
+			}
 			case 3 -> showAllByName();
-			case 4 -> addNew();
+			case 4 -> {
+				return addNew();
+			}
 			case 5 -> edit(relatedEntity instanceof Teacher teacher ? teacher : null);
 			case 6 -> delete(relatedEntity instanceof Teacher teacher ? teacher : null);
 			default -> throw new NoSuchElementException();
 		}
+		return false;
 	}
 
 	private void showAll() {
@@ -58,14 +68,14 @@ public class TeachersController extends ControllerBase {
 		view.waitToProceed();
 	}
 
-	private void showOneById(Teacher teacher) {
+	private boolean showOneById(Teacher teacher) {
 		view.clear();
 		view.showText("ПОИСК УЧИТЕЛЯ ПО ID");
 		do {
 			if (teacher == null) {
 				teacher = askTeacher();
 				if (teacher == null) {
-					return;
+					return false;
 				}
 			}
 
@@ -78,8 +88,11 @@ public class TeachersController extends ControllerBase {
 				var possibleMenuId = findSuitableMenuId(Commons.TEACHER_APPOINTMENTS_MENU, "учител");
 				if (possibleMenuId.isPresent()) {
 					var appointmentsController = controllersBag.teacherAppointmentsController();
-					appointmentsController.switchToAction(possibleMenuId.getAsInt(), teacher);
+					if (appointmentsController.switchToAction(possibleMenuId.getAsInt(), teacher)) {
+						return true;
+					}
 				} else {
+					logger.warn("Something went wrong when retrieving suitable menuId from TEACHER_APPOINTMENTS_MENU.");
 					view.showText("Что-то пошло не так.");
 				}
 			}
@@ -87,6 +100,8 @@ public class TeachersController extends ControllerBase {
 			teacher = null;
 
 		} while (view.askYesNo("Повторить поиск? (Д/н)", true));
+
+		return false;
 	}
 
 	private void showAllByName() {
@@ -118,7 +133,7 @@ public class TeachersController extends ControllerBase {
 		} while (view.askYesNo("Повторить поиск? (Д/н)", true));
 	}
 
-	private void addNew() {
+	private boolean addNew() {
 		view.clear();
 		view.showText("ДОБАВЛЕНИЕ УЧИТЕЛЯ");
 		boolean cancelled = false;
@@ -141,13 +156,17 @@ public class TeachersController extends ControllerBase {
 			teacher = dp.teachersRepository().addTeacher(teacher);
 
 			view.showList(List.of(new TeacherViewModel(teacher, null)), "\nУспешно добавлен учитель:");
+			logger.info("Teacher '{}' has been added.", teacher);
 
 			if (view.askYesNo("Добавить классное руководство? (Д/н)", true)) {
 				var group = editGroup(teacher);
 				if (group != null) {
 					if (dp.groupsRepository().updateGroup(group)) {
 						view.showText("Классное руководство успешно назначено.");
+						logger.info("Teacher '{}' became supervisor of '{}' class.", teacher, group);
 					} else {
+						logger.warn("Something went wrong on making teacher '{}' be supervisor of some class.",
+								teacher);
 						view.showText("Что-то пошло не так.");
 					}
 				}
@@ -157,8 +176,11 @@ public class TeachersController extends ControllerBase {
 				var possibleMenuId = findSuitableMenuId(Commons.TEACHER_APPOINTMENTS_MENU, "Добавить");
 				if (possibleMenuId.isPresent()) {
 					var appointmentsController = controllersBag.teacherAppointmentsController();
-					appointmentsController.switchToAction(possibleMenuId.getAsInt(), teacher);
+					if (appointmentsController.switchToAction(possibleMenuId.getAsInt(), teacher)) {
+						return true;
+					}
 				} else {
+					logger.warn("Something went wrong when retrieving suitable menuId from TEACHER_APPOINTMENTS_MENU.");
 					view.showText("Что-то пошло не так.");
 				}
 			}
@@ -168,6 +190,8 @@ public class TeachersController extends ControllerBase {
 			view.showText("Добавление отменено.");
 			view.waitToProceed();
 		}
+
+		return false;
 	}
 
 	private void edit(Teacher teacher) {
@@ -213,7 +237,10 @@ public class TeachersController extends ControllerBase {
 					if (result != null && view.askYesNo("Сохранить изменения? (Д/н)", true)) {
 						if (dp.teachersRepository().updateTeacher(teacher)) {
 							view.showText("Изменения успешно сохранены.");
+							logger.info("Teacher '{}' has been updated to '{}'.", bkpTeacher, teacher);
 						} else {
+							teacher = bkpTeacher;
+							logger.warn("Something went wrong on updating teacher '{}' to '{}'.", bkpTeacher, teacher);
 							view.showText("Что-то пошло не так. Изменения не были сохранены.");
 						}
 						view.waitToProceed();
@@ -256,7 +283,7 @@ public class TeachersController extends ControllerBase {
 				group.setTeacherId(teacher.getTeacherId());
 				return group;
 			} else {
-				view.showText("У группы уже есть классный руководитель. Виберите другую группу.");
+				view.showText("У группы уже есть классный руководитель. Выберите другую группу.");
 				continue;
 			}
 		} while (true);
@@ -289,6 +316,7 @@ public class TeachersController extends ControllerBase {
 				var teachersRepo = dp.teachersRepository();
 				if (teachersRepo.removeTeacher(teacherId)) {
 					view.showText("Запись успешно удалена!");
+					logger.info("Teacher '{}' has been deleted.", teacher);
 				}
 			} else {
 				view.showText("Удаление отменено.");

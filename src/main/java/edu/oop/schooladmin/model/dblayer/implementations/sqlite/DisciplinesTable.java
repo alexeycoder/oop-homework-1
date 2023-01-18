@@ -27,8 +27,13 @@ public class DisciplinesTable extends SqliteTableBase<Discipline> {
 		super(connection);
 	}
 
-	private static void bakeEntityToStatement(PreparedStatement ps, Discipline entity) throws SQLException {
+	private static void bakeEntityToInsertStatement(PreparedStatement ps, Discipline entity) throws SQLException {
 		ps.setString(1, entity.getName());
+	}
+
+	private static void bakeEntityToUpdateStatement(PreparedStatement ps, Discipline entity) throws SQLException {
+		bakeEntityToInsertStatement(ps, entity);
+		ps.setInt(2, entity.getDisciplineId());
 	}
 
 	private static Discipline resultSetToEntity(ResultSet rs) throws SQLException {
@@ -41,7 +46,7 @@ public class DisciplinesTable extends SqliteTableBase<Discipline> {
 	@Override
 	public Discipline add(Discipline entry) {
 		try (PreparedStatement ps = connection.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS)) {
-			bakeEntityToStatement(ps, entry);
+			bakeEntityToInsertStatement(ps, entry);
 			int affectedRows = ps.executeUpdate();
 			if (affectedRows == 0) {
 				return null;
@@ -118,7 +123,7 @@ public class DisciplinesTable extends SqliteTableBase<Discipline> {
 			return null;
 		}
 		try (PreparedStatement ps = connection.prepareStatement(deleteSql)) {
-			bakeEntityToStatement(ps, entry);
+			bakeEntityToUpdateStatement(ps, entry);
 			int affectedRows = ps.executeUpdate();
 			if (affectedRows == 0) {
 				return null;

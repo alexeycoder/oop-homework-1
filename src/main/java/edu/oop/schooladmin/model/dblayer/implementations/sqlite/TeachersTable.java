@@ -34,11 +34,16 @@ public class TeachersTable extends SqliteTableBase<Teacher> {
 		super(connection);
 	}
 
-	private static void bakeEntityToStatement(PreparedStatement ps, Teacher entity) throws SQLException {
+	private static void bakeEntityToInsertStatement(PreparedStatement ps, Teacher entity) throws SQLException {
 		ps.setString(1, entity.getFirstName());
 		ps.setString(2, entity.getLastName());
 		ps.setString(3, entity.getBirthDate().toString());
 		ps.setInt(4, entity.getGrade());
+	}
+
+	private static void bakeEntityToUpdateStatement(PreparedStatement ps, Teacher entity) throws SQLException {
+		bakeEntityToInsertStatement(ps, entity);
+		ps.setInt(5, entity.getTeacherId());
 	}
 
 	private static Teacher resultSetToEntity(ResultSet rs) throws SQLException {
@@ -54,7 +59,7 @@ public class TeachersTable extends SqliteTableBase<Teacher> {
 	@Override
 	public Teacher add(Teacher entry) {
 		try (PreparedStatement ps = connection.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS)) {
-			bakeEntityToStatement(ps, entry);
+			bakeEntityToInsertStatement(ps, entry);
 			int affectedRows = ps.executeUpdate();
 			if (affectedRows == 0) {
 				return null;
@@ -110,7 +115,7 @@ public class TeachersTable extends SqliteTableBase<Teacher> {
 	@Override
 	public boolean update(Teacher entry) {
 		try (PreparedStatement ps = connection.prepareStatement(updateSql)) {
-			bakeEntityToStatement(ps, entry);
+			bakeEntityToUpdateStatement(ps, entry);
 			int affectedRows = ps.executeUpdate();
 			if (affectedRows == 0) {
 				return false;

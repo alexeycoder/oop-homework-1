@@ -1,5 +1,6 @@
 package edu.oop.schooladmin.client;
 
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.sql.SQLException;
 import java.util.Locale;
 import java.util.NoSuchElementException;
@@ -21,6 +22,13 @@ public class App {
 	private static final Logger logger = LoggerFactory.getLogger(App.class);
 
 	public static void main(String[] args) {
+		Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler() {
+			@Override
+			public void uncaughtException(Thread t, Throwable e) {
+				logger.error("Unhandled exception caught.", e);
+			}
+		});
+
 		logger.info("Application started.");
 
 		Locale.setDefault(AppSettings.LOCALE);
@@ -38,7 +46,7 @@ public class App {
 			// consoleView.showText(ex.getMessage());
 		}
 
-		logger.info("Application finished.");
+		logger.info("Application finished." + System.lineSeparator());
 	}
 
 	private static DbLayerContext selectDbContext() throws SQLException {

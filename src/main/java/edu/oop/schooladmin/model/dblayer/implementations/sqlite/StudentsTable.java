@@ -10,9 +10,14 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.oop.schooladmin.model.entities.Student;
 
 public class StudentsTable extends SqliteTableBase<Student> {
+
+	private static final Logger logger = LoggerFactory.getLogger(StudentsTable.class);
 
 	private final String insertSql = """
 			INSERT INTO students (first_name, last_name, birth_date, group_id)
@@ -35,7 +40,7 @@ public class StudentsTable extends SqliteTableBase<Student> {
 		super(connection);
 	}
 
-	private static void bakeEntityToStatement(PreparedStatement ps, Student entity) throws SQLException {
+	private static void bakeEntityToInsertStatement(PreparedStatement ps, Student entity) throws SQLException {
 		ps.setString(1, entity.getFirstName());
 		ps.setString(2, entity.getLastName());
 		ps.setString(3, entity.getBirthDate().toString());
@@ -45,6 +50,11 @@ public class StudentsTable extends SqliteTableBase<Student> {
 		} else {
 			ps.setNull(4, Types.INTEGER);
 		}
+	}
+
+	private static void bakeEntityToUpdateStatement(PreparedStatement ps, Student entity) throws SQLException {
+		bakeEntityToInsertStatement(ps, entity);
+		ps.setInt(5, entity.getStudentId());
 	}
 
 	private static Student resultSetToEntity(ResultSet rs) throws SQLException {
@@ -64,7 +74,7 @@ public class StudentsTable extends SqliteTableBase<Student> {
 	@Override
 	public Student add(Student entry) {
 		try (PreparedStatement ps = connection.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS)) {
-			bakeEntityToStatement(ps, entry);
+			bakeEntityToInsertStatement(ps, entry);
 			int affectedRows = ps.executeUpdate();
 			if (affectedRows == 0) {
 				return null;
@@ -78,7 +88,7 @@ public class StudentsTable extends SqliteTableBase<Student> {
 				}
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("Error on adding new student.", ex);
 			return null;
 		}
 	}
@@ -94,7 +104,7 @@ public class StudentsTable extends SqliteTableBase<Student> {
 			}
 			return list.stream();
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("Error on querying all students.", ex);
 			return Stream.empty();
 		}
 	}
@@ -112,7 +122,7 @@ public class StudentsTable extends SqliteTableBase<Student> {
 				return null;
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("Error on getting student by id.", ex);
 			return null;
 		}
 	}
@@ -120,7 +130,7 @@ public class StudentsTable extends SqliteTableBase<Student> {
 	@Override
 	public boolean update(Student entry) {
 		try (PreparedStatement ps = connection.prepareStatement(updateSql)) {
-			bakeEntityToStatement(ps, entry);
+			bakeEntityToUpdateStatement(ps, entry);
 			int affectedRows = ps.executeUpdate();
 			if (affectedRows == 0) {
 				return false;
@@ -128,7 +138,7 @@ public class StudentsTable extends SqliteTableBase<Student> {
 			return true;
 
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("Error on updating student.", ex);
 			return false;
 		}
 	}
@@ -148,7 +158,7 @@ public class StudentsTable extends SqliteTableBase<Student> {
 			return entry;
 
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("Error on deleting student.", ex);
 			return null;
 		}
 	}
