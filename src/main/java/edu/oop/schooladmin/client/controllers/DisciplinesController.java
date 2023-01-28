@@ -4,14 +4,18 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.oop.schooladmin.client.controllers.MainController.ControllersBag;
 import edu.oop.schooladmin.client.viewmodels.Commons;
 import edu.oop.schooladmin.client.viewmodels.DisciplineViewModel;
 import edu.oop.schooladmin.client.views.ViewBase;
-import edu.oop.schooladmin.model.interfaces.DataProvider;
+import edu.oop.schooladmin.model.businesslevel.interfaces.DataProvider;
 
 public class DisciplinesController extends ControllerBase {
 
+	private static final Logger logger = LoggerFactory.getLogger(DisciplinesController.class);
 	// private final ControllersBag controllersBag;
 
 	public DisciplinesController(DataProvider dataProvider, ViewBase viewManager, ControllersBag controllersBag) {
@@ -20,6 +24,7 @@ public class DisciplinesController extends ControllerBase {
 			throw new NullPointerException("controllersBag");
 		}
 		// this.controllersBag = controllersBag;
+		logger.trace("Controller instance successfully created.");
 	}
 
 	@Override
@@ -28,7 +33,7 @@ public class DisciplinesController extends ControllerBase {
 	}
 
 	@Override
-	protected void switchToAction(int menuId, Object relatedEntity) {
+	protected boolean switchToAction(int menuId, Object relatedEntity) {
 		switch (menuId) {
 			case 1 -> showAll();
 			case 2 -> dummyAction();
@@ -36,6 +41,7 @@ public class DisciplinesController extends ControllerBase {
 			case 4 -> dummyAction();
 			default -> throw new NoSuchElementException();
 		}
+		return false;
 	}
 
 	private void showAll() {

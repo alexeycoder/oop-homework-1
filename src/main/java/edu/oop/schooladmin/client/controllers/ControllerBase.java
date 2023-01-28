@@ -4,9 +4,13 @@ import java.time.LocalDate;
 import java.util.Map;
 import java.util.OptionalInt;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.oop.schooladmin.client.AppSettings;
 import edu.oop.schooladmin.client.viewmodels.Commons;
 import edu.oop.schooladmin.client.views.ViewBase;
+import edu.oop.schooladmin.model.businesslevel.interfaces.DataProvider;
 import edu.oop.schooladmin.model.entities.Discipline;
 import edu.oop.schooladmin.model.entities.Group;
 import edu.oop.schooladmin.model.entities.Person;
@@ -14,20 +18,33 @@ import edu.oop.schooladmin.model.entities.Rating;
 import edu.oop.schooladmin.model.entities.Student;
 import edu.oop.schooladmin.model.entities.Teacher;
 import edu.oop.schooladmin.model.entities.TeacherAppointment;
-import edu.oop.schooladmin.model.interfaces.DataProvider;
+import edu.oop.utils.StackInfo;
 
 public abstract class ControllerBase {
 
 	protected final DataProvider dp;
 	protected final ViewBase view;
 
+	private static final Logger logger = LoggerFactory.getLogger(ControllerBase.class);
+
 	public ControllerBase(DataProvider dataProvider, ViewBase viewManager) {
 		this.dp = dataProvider;
 		this.view = viewManager;
 	}
 
-	/** Запуск жизненного цикла контроллера */
-	public void runLifecycle() {
+	/**
+	 * Запуск жизненного цикла контроллера
+	 * 
+	 * @return true, если завершение жизненного цикла контроллера вызвано
+	 *         отправкой пользователем команды завершения приложения.
+	 *         false, если жизненный цикл контроллера завершился естественным
+	 *         образом без явной команды завершить приложение (например, по команде
+	 *         вернуться в предыдущее меню).
+	 */
+	public boolean runLifecycle() {
+		logger.trace("Entered controller {} lifecycle.", this.getClass().getSimpleName());
+
+		boolean exit = false;
 		do {
 			var menuModel = getMenuModel();
 			view.clear();
@@ -35,33 +52,55 @@ public abstract class ControllerBase {
 			Object userChoice = view.askUserChoice(Commons.MENU_MAKE_YOUR_CHOICE, menuModel);
 			if (userChoice.equals(Commons.CMD_EXIT)) {
 
-				forceExit();
+				// forceExit();
+				exit = true;
+				view.showGoodbye();
+				break;
 
 			} else if (userChoice.equals(Commons.CMD_GO_BACK)) {
 
-				return;
+				break;
 
 			} else if (userChoice instanceof Integer menuId) {
 
-				switchToAction(menuId, null);
+				exit = switchToAction(menuId, null);
+				if (exit) {
+					break;
+				}
 			}
 
 		} while (true);
+
+		logger.trace("Exit controller {} lifecycle.", this.getClass().getSimpleName());
+		return exit;
 	}
 
 	protected abstract Map<Object, String> getMenuModel();
 
-	protected abstract void switchToAction(int menuId, Object relatedEntity);
+	/**
+	 * Маршрутизация управления в зависимости от выбранного цифрового пункта меню.
+	 * 
+	 * @param menuId        Выбранный пункт меню.
+	 * @param relatedEntity Сущность, с которой подразумевается выполнение
+	 *                      выбранного через меню действия.
+	 * @return true, если в процессе выполнения команды меню требуется завершение
+	 *         приложение (например, поступила явная команда на завершение от
+	 *         пользователя).
+	 *         false, если выполнение команды меню завершилось обычным образом и
+	 *         не требуется завершения приложения.
+	 */
+	protected abstract boolean switchToAction(int menuId, Object relatedEntity);
 
 	protected void dummyAction() {
+		logger.debug("Unimplemented function call: {}.", StackInfo.ofExecutingMethod());
 		System.out.println("Приветики. Данная функция ожидается в следующей версии...");
 		view.waitToProceed();
 	}
 
-	protected void forceExit() {
-		view.showGoodbye();
-		System.exit(0);
-	}
+	// protected void forceExit() {
+	// view.showGoodbye();
+	// System.exit(0);
+	// }
 
 	protected OptionalInt findSuitableMenuId(Map<Object, String> menuModel, String stringSample) {
 		assert menuModel != null && stringSample != null && !stringSample.isEmpty();

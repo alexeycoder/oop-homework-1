@@ -2,6 +2,7 @@
 [Tt]est/
 .vscode/
 SCHEME.md
+SCHEME_v2.md
 
 # Compiled class file
 *.class

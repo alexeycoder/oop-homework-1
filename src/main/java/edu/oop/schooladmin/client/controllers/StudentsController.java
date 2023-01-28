@@ -5,17 +5,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.oop.schooladmin.client.controllers.MainController.ControllersBag;
 import edu.oop.schooladmin.client.viewmodels.Commons;
 import edu.oop.schooladmin.client.viewmodels.GroupViewModel;
 import edu.oop.schooladmin.client.viewmodels.StudentViewModel;
 import edu.oop.schooladmin.client.views.ViewBase;
+import edu.oop.schooladmin.model.businesslevel.interfaces.DataProvider;
 import edu.oop.schooladmin.model.entities.Group;
 import edu.oop.schooladmin.model.entities.Student;
-import edu.oop.schooladmin.model.interfaces.DataProvider;
 
 public class StudentsController extends ControllerBase {
 
+	private static final Logger logger = LoggerFactory.getLogger(StudentsController.class);
 	private final ControllersBag controllersBag;
 
 	public StudentsController(DataProvider dataProvider, ViewBase viewManager, ControllersBag controllersBag) {
@@ -24,6 +28,7 @@ public class StudentsController extends ControllerBase {
 			throw new NullPointerException("controllersBag");
 		}
 		this.controllersBag = controllersBag;
+		logger.trace("Controller instance successfully created.");
 	}
 
 	@Override
@@ -32,17 +37,20 @@ public class StudentsController extends ControllerBase {
 	}
 
 	@Override
-	protected void switchToAction(int menuId, Object relatedEntity) {
+	protected boolean switchToAction(int menuId, Object relatedEntity) {
 		switch (menuId) {
 			case 1 -> showAll();
 			case 2 -> showByGroup(relatedEntity instanceof Group group ? group : null);
-			case 3 -> showOneById(relatedEntity instanceof Student student ? student : null);
+			case 3 -> {
+				return showOneById(relatedEntity instanceof Student student ? student : null);
+			}
 			case 4 -> showAllByName();
 			case 5 -> addNew();
 			case 6 -> edit(relatedEntity instanceof Student student ? student : null);
 			case 7 -> delete(relatedEntity instanceof Student student ? student : null);
 			default -> throw new NoSuchElementException();
 		}
+		return false;
 	}
 
 	private void showAll() {
@@ -59,7 +67,7 @@ public class StudentsController extends ControllerBase {
 		view.waitToProceed();
 	}
 
-	private void showOneById(Student student) {
+	private boolean showOneById(Student student) {
 		view.clear();
 		view.showText("ПОИСК УЧЕНИКА ПО ID");
 		do {
@@ -68,7 +76,7 @@ public class StudentsController extends ControllerBase {
 				student = askStudent();
 				if (student == null) {
 					view.waitToProceed();
-					return;
+					return false;
 				}
 			}
 
@@ -81,8 +89,12 @@ public class StudentsController extends ControllerBase {
 				var possibleMenuId = findSuitableMenuId(Commons.RATINGS_MENU, "оценки ученик");
 				if (possibleMenuId.isPresent()) {
 					var ratingsController = controllersBag.ratingsController();
-					ratingsController.switchToAction(possibleMenuId.getAsInt(), student);
+					boolean exit = ratingsController.switchToAction(possibleMenuId.getAsInt(), student);
+					if (exit) {
+						return true;
+					}
 				} else {
+					logger.warn("Something went wrong when retrieving suitable menuId from RATINGS_MENU.");
 					view.showText("Что-то пошло не так.");
 				}
 			}
@@ -90,6 +102,8 @@ public class StudentsController extends ControllerBase {
 			student = null;
 
 		} while (view.askYesNo("Повторить поиск? (Д/н)", true));
+
+		return false;
 	}
 
 	private void showByGroup(Group group) {
@@ -174,11 +188,14 @@ public class StudentsController extends ControllerBase {
 				break;
 			}
 
-			student = dp.studentsRepository().addStudent(student);
-			if (student != null) {
+			Student addedStudent = dp.studentsRepository().addStudent(student);
+			if (addedStudent != null) {
 				view.showEmpty();
-				view.showList(List.of(new StudentViewModel(student, group)), "Успешно добавлен ученик:");
+				view.showList(List.of(new StudentViewModel(addedStudent, group)), "Успешно добавлен ученик:");
+				logger.info("New student '{}' has been added.", addedStudent);
 			} else {
+				logger.warn("Something went wrong on attempt to add a new student '{}' into group '{}'.",
+						student, group);
 				view.showText("Что-то пошло не так. Не удалось добавить ученика.");
 			}
 
@@ -231,7 +248,10 @@ public class StudentsController extends ControllerBase {
 					if (result != null && view.askYesNo("Сохранить изменения? (Д/н)", true)) {
 						if (dp.studentsRepository().updateStudent(student)) {
 							view.showText("Изменения успешно сохранены.");
+							logger.info("Student '{}' has been updated to '{}'.", bkpStudent, student);
 						} else {
+							student = bkpStudent;
+							logger.warn("Something went wrong on updating student '{}' to '{}'.", bkpStudent, student);
 							view.showText("Что-то пошло не так. Изменения не были сохранены.");
 						}
 						view.waitToProceed();
@@ -287,6 +307,7 @@ public class StudentsController extends ControllerBase {
 				var studentsRepo = dp.studentsRepository();
 				if (studentsRepo.removeStudent(studentId)) {
 					view.showText("Запись успешно удалена!");
+					logger.info("Student '{}' has been deleted.", student);
 				}
 			} else {
 				view.showText("Удаление отменено.");

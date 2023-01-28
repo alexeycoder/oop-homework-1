@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.oop.schooladmin.client.controllers.MainController.ControllersBag;
 import edu.oop.schooladmin.client.viewmodels.Commons;
 import edu.oop.schooladmin.client.viewmodels.DisciplineViewModel;
@@ -11,14 +14,15 @@ import edu.oop.schooladmin.client.viewmodels.GroupViewModel;
 import edu.oop.schooladmin.client.viewmodels.TeacherAppointmentsViewModel;
 import edu.oop.schooladmin.client.viewmodels.TeacherViewModel;
 import edu.oop.schooladmin.client.views.ViewBase;
+import edu.oop.schooladmin.model.businesslevel.interfaces.DataProvider;
 import edu.oop.schooladmin.model.entities.Discipline;
 import edu.oop.schooladmin.model.entities.Group;
 import edu.oop.schooladmin.model.entities.Teacher;
 import edu.oop.schooladmin.model.entities.TeacherAppointment;
-import edu.oop.schooladmin.model.interfaces.DataProvider;
 
 public class TeacherAppointmentsController extends ControllerBase {
 
+	private static final Logger logger = LoggerFactory.getLogger(TeacherAppointmentsController.class);
 	// private final ControllersBag controllersBag;
 
 	public TeacherAppointmentsController(
@@ -28,6 +32,7 @@ public class TeacherAppointmentsController extends ControllerBase {
 			throw new NullPointerException("controllersBag");
 		}
 		// this.controllersBag = controllersBag;
+		logger.trace("Controller instance successfully created.");
 	}
 
 	@Override
@@ -36,7 +41,7 @@ public class TeacherAppointmentsController extends ControllerBase {
 	}
 
 	@Override
-	protected void switchToAction(int menuId, Object relatedEntity) {
+	protected boolean switchToAction(int menuId, Object relatedEntity) {
 		switch (menuId) {
 			case 1 -> showAll();
 			case 2 -> showByTeacher(relatedEntity instanceof Teacher teacher ? teacher : null);
@@ -47,6 +52,7 @@ public class TeacherAppointmentsController extends ControllerBase {
 			case 7 -> delete(relatedEntity instanceof TeacherAppointment appointment ? appointment : null);
 			default -> throw new NoSuchElementException();
 		}
+		return false;
 	}
 
 	private void showAll() {
@@ -213,6 +219,7 @@ public class TeacherAppointmentsController extends ControllerBase {
 			view.showEmpty();
 			view.showList(List.of(new TeacherAppointmentsViewModel(appointment, teacher, discipline, group)),
 					"Успешно добавлено назначение:");
+			logger.info("New teacher appointment '{}' has been added.", appointment);
 
 		} while (askMore && view.askYesNo("Добавить ещё? (Д/н)", true));
 
@@ -262,7 +269,11 @@ public class TeacherAppointmentsController extends ControllerBase {
 					if (result != null && view.askYesNo("Сохранить изменения? (Д/н)", true)) {
 						if (dp.teacherAppointmentsRepository().updateTeacherAppointment(appointment)) {
 							view.showText("Изменения успешно сохранены.");
+							logger.info("Teacher appointment '{}' has been updated to '{}'.",
+									bkpAppointment, appointment);
 						} else {
+							logger.warn("Something went wrong when updating teacher appointment '{}' to '{}'.",
+									bkpAppointment, appointment);
 							view.showText("Что-то пошло не так. Изменения не были сохранены.");
 						}
 						view.waitToProceed();
@@ -337,6 +348,7 @@ public class TeacherAppointmentsController extends ControllerBase {
 				var teacherAppointmentsRepo = dp.teacherAppointmentsRepository();
 				if (teacherAppointmentsRepo.removeTeacherAppointment(appointmentId)) {
 					view.showText("Запись успешно удалена!");
+					logger.info("Teacher appointment '{}' has been deleted.", appointment);
 				}
 			} else {
 				view.showText("Удаление отменено.");
